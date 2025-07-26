@@ -33,7 +33,7 @@ const Header = () => {
   const isActive = (href) => location.pathname === href;
 
   return (
-    <header className="glass-effect sticky top-0 z-50">
+    <header className="bg-white/10 backdrop-blur-md border-b border-white/20 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}

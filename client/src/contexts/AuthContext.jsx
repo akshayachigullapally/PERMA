@@ -93,12 +93,17 @@ const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const getToken = () => {
+    return localStorage.getItem('token');
+  };
+
   const value = {
     user,
     loading,
     signIn,
     signUp,
     signOut,
+    getToken,
     isSignedIn: !!user
   };
 

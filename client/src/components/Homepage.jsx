@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { useAnalytics } from '../hooks/useAnalytics';
 import { Link2, ArrowRight } from 'lucide-react';
 import HeroSection from './HeroSection';
 import FeaturesSection from './FeaturesSection';
@@ -8,6 +9,11 @@ import FeaturesSection from './FeaturesSection';
 const Homepage = () => {
   const { isSignedIn } = useAuth();
   const navigate = useNavigate();
+  const { platformStats, loading, error, fetchPlatformStats } = useAnalytics();
+
+  useEffect(() => {
+    fetchPlatformStats();
+  }, [fetchPlatformStats]);
 
   const handleSignInClick = () => {
     navigate('/sign-in');
@@ -32,17 +38,38 @@ const Homepage = () => {
       {/* Stats Section */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="animate-pulse">
+                  <div className="h-12 bg-gray-700 rounded mb-2"></div>
+                  <div className="h-4 bg-gray-700 rounded"></div>
+                </div>
+              ))}
+            </div>
+          ) : error ? (
+            <div className="text-center text-gray-400">
+              <p>Unable to load statistics. Showing estimated values.</p>
+            </div>
+          ) : null}
+          
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
             <div>
-              <div className="text-3xl md:text-4xl font-bold text-blue-400 mb-2">5+</div>
-              <div className="text-gray-400">Links per user</div>
+              <div className="text-3xl md:text-4xl font-bold text-blue-400 mb-2">
+                {platformStats?.avgLinksPerUser || 5}+
+              </div>
+              <div className="text-gray-400">Avg links per user</div>
             </div>
             <div>
-              <div className="text-3xl md:text-4xl font-bold text-green-400 mb-2">15%</div>
+              <div className="text-3xl md:text-4xl font-bold text-green-400 mb-2">
+                {platformStats?.monthlyGrowth || 15}%
+              </div>
               <div className="text-gray-400">Monthly growth</div>
             </div>
             <div>
-              <div className="text-3xl md:text-4xl font-bold text-purple-400 mb-2">3%+</div>
+              <div className="text-3xl md:text-4xl font-bold text-purple-400 mb-2">
+                {platformStats?.proConversionRate || 3}%
+              </div>
               <div className="text-gray-400">Pro conversion</div>
             </div>
             <div>

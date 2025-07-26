@@ -26,6 +26,18 @@ const linkSchema = new mongoose.Schema({
   order: {
     type: Number,
     default: 0
+  },
+  icon: {
+    type: String,
+    trim: true
+  },
+  backgroundColor: {
+    type: String,
+    default: '#3B82F6'
+  },
+  textColor: {
+    type: String,
+    default: '#FFFFFF'
   }
 }, {
   timestamps: true

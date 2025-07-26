@@ -9,12 +9,25 @@ import {
   TrashIcon,
   ClipboardDocumentIcon,
   ChartBarIcon,
-  ArrowTopRightOnSquareIcon
+  ArrowTopRightOnSquareIcon,
+  QrCodeIcon
 } from '@heroicons/react/24/outline';
-import { toast } from 'react-hot-toast';
 
-const SortableLink = ({ link, onDelete, onToggleVisibility }) => {
+const SortableLink = ({ 
+  link, 
+  onDelete, 
+  onToggleVisibility, 
+  onEdit, 
+  onCopy, 
+  onGenerateQR 
+}) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editData, setEditData] = useState({
+    title: link.title,
+    url: link.url,
+    description: link.description || ''
+  });
   
   const {
     attributes,
@@ -23,7 +36,7 @@ const SortableLink = ({ link, onDelete, onToggleVisibility }) => {
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: link.id });
+  } = useSortable({ id: link._id || link.id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -31,10 +44,33 @@ const SortableLink = ({ link, onDelete, onToggleVisibility }) => {
     opacity: isDragging ? 0.5 : 1,
   };
 
+  const handleEdit = () => {
+    setIsEditing(true);
+  };
+
+  const handleSaveEdit = (e) => {
+    e.stopPropagation();
+    if (!editData.title.trim() || !editData.url.trim()) {
+      return;
+    }
+    
+    onEdit(editData);
+    setIsEditing(false);
+  };
+
+  const handleCancelEdit = (e) => {
+    e.stopPropagation();
+    setEditData({
+      title: link.title,
+      url: link.url,
+      description: link.description || ''
+    });
+    setIsEditing(false);
+  };
+
   const copyLink = (e) => {
     e.stopPropagation();
-    navigator.clipboard.writeText(link.url);
-    toast.success('Link copied to clipboard!');
+    onCopy();
   };
 
   const openLink = (e) => {
@@ -42,118 +78,175 @@ const SortableLink = ({ link, onDelete, onToggleVisibility }) => {
     window.open(link.url, '_blank');
   };
 
+  const handleToggleVisibility = (e) => {
+    e.stopPropagation();
+    onToggleVisibility();
+  };
+
+  const handleDelete = (e) => {
+    e.stopPropagation();
+    onDelete();
+  };
+
+  const handleGenerateQR = (e) => {
+    e.stopPropagation();
+    onGenerateQR();
+  };
+
+  if (isEditing) {
+    return (
+      <div
+        ref={setNodeRef}
+        className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20"
+      >
+        <div className="space-y-4">
+          <div>
+            <input
+              type="text"
+              value={editData.title}
+              onChange={(e) => setEditData(prev => ({ ...prev, title: e.target.value }))}
+              className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Link title"
+            />
+          </div>
+          <div>
+            <input
+              type="url"
+              value={editData.url}
+              onChange={(e) => setEditData(prev => ({ ...prev, url: e.target.value }))}
+              className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="https://example.com"
+            />
+          </div>
+          <div>
+            <input
+              type="text"
+              value={editData.description}
+              onChange={(e) => setEditData(prev => ({ ...prev, description: e.target.value }))}
+              className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Description (optional)"
+            />
+          </div>
+          <div className="flex space-x-2">
+            <button
+              onClick={handleSaveEdit}
+              className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+            >
+              Save
+            </button>
+            <button
+              onClick={handleCancelEdit}
+              className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       ref={setNodeRef}
       style={style}
       className={`
-        link-card rounded-xl p-4 cursor-pointer group
-        ${!link.isVisible ? 'opacity-50' : ''}
+        bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20 cursor-pointer group
+        hover:bg-white/15 transition-all duration-200 
+        ${isDragging ? 'shadow-2xl' : 'hover:shadow-lg'}
+        ${!link.isActive ? 'opacity-60' : ''}
       `}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="flex items-center space-x-4">
-        {/* Drag Handle */}
-        <button
-          {...attributes}
-          {...listeners}
-          className="text-gray-400 hover:text-gray-600 transition-colors cursor-grab active:cursor-grabbing"
-        >
-          <Bars3Icon className="h-5 w-5" />
-        </button>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4 flex-1 min-w-0">
+          {/* Drag Handle */}
+          <div
+            {...attributes}
+            {...listeners}
+            className="cursor-grab active:cursor-grabbing p-1 rounded hover:bg-white/10"
+          >
+            <Bars3Icon className="w-5 h-5 text-gray-400" />
+          </div>
 
-        {/* Link Icon */}
-        <div className="w-12 h-12 bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg flex items-center justify-center">
-          <span className="text-2xl">{link.icon}</span>
-        </div>
-
-        {/* Link Info */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center space-x-2">
-            <h3 className="text-lg font-semibold text-gray-800 truncate">{link.title}</h3>
-            {!link.isVisible && (
-              <EyeSlashIcon className="h-4 w-4 text-gray-400" />
+          {/* Link Content */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center space-x-2 mb-1">
+              <h3 className="text-white font-medium truncate">{link.title}</h3>
+              {!link.isActive && (
+                <EyeSlashIcon className="w-4 h-4 text-gray-400 flex-shrink-0" />
+              )}
+            </div>
+            <p className="text-gray-400 text-sm truncate">{link.url}</p>
+            {link.description && (
+              <p className="text-gray-500 text-xs mt-1 truncate">{link.description}</p>
             )}
           </div>
-          <p className="text-sm text-gray-500 truncate">{link.url}</p>
-          <div className="flex items-center mt-1 space-x-4">
-            <div className="flex items-center text-sm text-gray-500">
-              <ChartBarIcon className="h-4 w-4 mr-1" />
-              {link.clicks.toLocaleString()} clicks
-            </div>
-            <div className="flex items-center text-sm text-green-600">
-              <ArrowTopRightOnSquareIcon className="h-4 w-4 mr-1" />
-              CTR: {((link.clicks / 1000) * 100).toFixed(1)}%
+
+          {/* Stats */}
+          <div className="text-right">
+            <div className="flex items-center space-x-2 text-gray-400 text-sm">
+              <ChartBarIcon className="w-4 h-4" />
+              <span>{link.clicks || 0} clicks</span>
             </div>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className={`
-          flex items-center space-x-2 transition-all duration-200
-          ${isHovered ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-2'}
-        `}>
+        <div className={`flex items-center space-x-1 transition-opacity duration-200 ${
+          isHovered ? 'opacity-100' : 'opacity-0'
+        }`}>
           <button
-            onClick={copyLink}
-            className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-all"
-            title="Copy link"
+            onClick={openLink}
+            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+            title="Open link"
           >
-            <ClipboardDocumentIcon className="h-4 w-4" />
+            <ArrowTopRightOnSquareIcon className="w-4 h-4 text-gray-400 hover:text-white" />
           </button>
           
           <button
-            onClick={openLink}
-            className="p-2 text-gray-400 hover:text-green-500 hover:bg-green-50 rounded-lg transition-all"
-            title="Open link"
+            onClick={copyLink}
+            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+            title="Copy link"
           >
-            <ArrowTopRightOnSquareIcon className="h-4 w-4" />
+            <ClipboardDocumentIcon className="w-4 h-4 text-gray-400 hover:text-white" />
           </button>
 
           <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggleVisibility(link.id);
-            }}
-            className={`
-              p-2 rounded-lg transition-all
-              ${link.isVisible 
-                ? 'text-gray-400 hover:text-yellow-500 hover:bg-yellow-50' 
-                : 'text-yellow-500 hover:text-gray-400 hover:bg-gray-50'
-              }
-            `}
-            title={link.isVisible ? 'Hide link' : 'Show link'}
+            onClick={handleGenerateQR}
+            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+            title="Generate QR code"
           >
-            {link.isVisible ? (
-              <EyeIcon className="h-4 w-4" />
-            ) : (
-              <EyeSlashIcon className="h-4 w-4" />
-            )}
+            <QrCodeIcon className="w-4 h-4 text-gray-400 hover:text-white" />
           </button>
-
+          
           <button
-            onClick={(e) => {
-              e.stopPropagation();
-              // TODO: Implement edit functionality
-              toast.info('Edit functionality coming soon!');
-            }}
-            className="p-2 text-gray-400 hover:text-purple-500 hover:bg-purple-50 rounded-lg transition-all"
+            onClick={handleEdit}
+            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
             title="Edit link"
           >
-            <PencilIcon className="h-4 w-4" />
+            <PencilIcon className="w-4 h-4 text-gray-400 hover:text-white" />
           </button>
 
           <button
-            onClick={(e) => {
-              e.stopPropagation();
-              if (window.confirm('Are you sure you want to delete this link?')) {
-                onDelete(link.id);
-              }
-            }}
-            className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+            onClick={handleToggleVisibility}
+            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+            title={link.isActive ? 'Hide link' : 'Show link'}
+          >
+            {link.isActive ? (
+              <EyeIcon className="w-4 h-4 text-gray-400 hover:text-white" />
+            ) : (
+              <EyeSlashIcon className="w-4 h-4 text-gray-400 hover:text-white" />
+            )}
+          </button>
+          
+          <button
+            onClick={handleDelete}
+            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
             title="Delete link"
           >
-            <TrashIcon className="h-4 w-4" />
+            <TrashIcon className="w-4 h-4 text-gray-400 hover:text-red-400" />
           </button>
         </div>
       </div>

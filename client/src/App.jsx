@@ -1,7 +1,11 @@
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from './hooks/useAuth'
 import Homepage from './components/Homepage'
-import Dashboard from './components/Dashboard'
+import ComprehensiveDashboard from './components/ComprehensiveDashboard'
+import AnalyticsPage from './components/AnalyticsPage'
+import QRCodes from './components/QRCodes'
+import Directory from './components/Directory'
+import ComprehensiveProfileSettings from './components/ComprehensiveProfileSettings'
 import PublicProfile from './components/PublicProfile'
 import SignIn from './components/SignIn'
 import SignUp from './components/SignUp'
@@ -45,7 +49,23 @@ function App() {
           />
           <Route 
             path="/dashboard" 
-            element={isSignedIn ? <Dashboard /> : <Navigate to="/sign-in" replace />} 
+            element={isSignedIn ? <ComprehensiveDashboard /> : <Navigate to="/sign-in" replace />} 
+          />
+          <Route 
+            path="/analytics" 
+            element={isSignedIn ? <AnalyticsPage /> : <Navigate to="/sign-in" replace />} 
+          />
+          <Route 
+            path="/qr-codes" 
+            element={isSignedIn ? <QRCodes /> : <Navigate to="/sign-in" replace />} 
+          />
+          <Route 
+            path="/settings" 
+            element={isSignedIn ? <ComprehensiveProfileSettings /> : <Navigate to="/sign-in" replace />} 
+          />
+          <Route 
+            path="/directory" 
+            element={<Directory />} 
           />
           <Route 
             path="/:username" 

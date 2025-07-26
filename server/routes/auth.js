@@ -26,19 +26,23 @@ export const authenticateToken = (req, res, next) => {
 // Sign up
 router.post('/signup', async (req, res) => {
   try {
+    console.log('Signup request received:', req.body);
     const { email, password, username } = req.body;
 
     // Validate input
     if (!email || !password || !username) {
+      console.log('Missing required fields');
       return res.status(400).json({ message: 'Email, password, and username are required' });
     }
 
+    console.log('Checking for existing user...');
     // Check if user already exists
     const existingUser = await User.findOne({ 
       $or: [{ email }, { username }] 
     });
 
     if (existingUser) {
+      console.log('User already exists:', existingUser.email, existingUser.username);
       if (existingUser.email === email) {
         return res.status(400).json({ message: 'Email already exists' });
       }
@@ -47,9 +51,11 @@ router.post('/signup', async (req, res) => {
       }
     }
 
+    console.log('Hashing password...');
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 12);
 
+    console.log('Creating user...');
     // Create user
     const user = new User({
       email,
@@ -58,8 +64,10 @@ router.post('/signup', async (req, res) => {
       displayName: username
     });
 
+    console.log('Saving user to database...');
     await user.save();
 
+    console.log('Generating JWT token...');
     // Generate JWT token
     const token = jwt.sign(
       { userId: user._id, email: user.email, username: user.username },
@@ -70,6 +78,7 @@ router.post('/signup', async (req, res) => {
     // Return user data (without password)
     const { password: _, ...userWithoutPassword } = user.toObject();
     
+    console.log('Signup successful for user:', user.username);
     res.status(201).json({
       message: 'User created successfully',
       token,
@@ -77,7 +86,8 @@ router.post('/signup', async (req, res) => {
     });
   } catch (error) {
     console.error('Signup error:', error);
-    res.status(500).json({ message: 'Server error during signup' });
+    console.error('Error stack:', error.stack);
+    res.status(500).json({ message: 'Server error during signup', error: error.message });
   }
 });
 

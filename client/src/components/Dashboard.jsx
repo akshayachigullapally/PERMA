@@ -125,9 +125,10 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-8">
-      {/* Header Section */}
-      <div className="text-center">
+    <div className="min-h-screen bg-gray-900 text-white">
+      <div className="max-w-4xl mx-auto p-6 space-y-8">
+        {/* Header Section */}
+        <div className="text-center">
         <div className="glass-effect rounded-2xl p-8 mb-8">
           <div className="w-24 h-24 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mx-auto mb-4 flex items-center justify-center overflow-hidden">
             {user.avatar ? (
@@ -246,6 +247,7 @@ const Dashboard = () => {
         onClose={() => setIsAddModalOpen(false)}
         onAdd={addLink}
       />
+      </div>
     </div>
   );
 };

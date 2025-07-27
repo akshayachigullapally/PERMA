@@ -130,7 +130,7 @@ const LandingPage = () => {
               <Link to="/sign-in" className="text-white hover:text-gray-200 transition-colors">
                 Sign In
               </Link>
-              <Link to="/sign-up" className="btn-primary text-white px-6 py-2 rounded-lg">
+              <Link to="/sign-up" className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-lg transition-all duration-200">
                 Get Started
               </Link>
             </div>
@@ -150,7 +150,7 @@ const LandingPage = () => {
             secure, trackable and—even a little fun.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-            <Link to="/sign-up" className="btn-primary text-white px-8 py-4 rounded-lg text-lg font-semibold flex items-center space-x-2">
+            <Link to="/sign-up" className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-8 py-4 rounded-lg text-lg font-semibold flex items-center space-x-2 transition-all duration-200">
               <span>Start Building Your Perma</span>
               <ArrowRightIcon className="h-5 w-5" />
             </Link>
@@ -257,7 +257,7 @@ const LandingPage = () => {
                     className={`
                       w-full py-3 px-6 rounded-lg font-semibold transition-all
                       ${plan.popular 
-                        ? 'btn-primary text-white' 
+                        ? 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white' 
                         : 'bg-white/10 text-white hover:bg-white/20'
                       }
                     `}
@@ -270,7 +270,7 @@ const LandingPage = () => {
                       className={`
                         w-full py-3 px-6 rounded-lg font-semibold transition-all
                         ${plan.popular 
-                          ? 'btn-primary text-white' 
+                          ? 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white' 
                           : 'bg-white/10 text-white hover:bg-white/20'
                         }
                       `}
@@ -295,7 +295,7 @@ const LandingPage = () => {
             <p className="text-xl text-gray-200 mb-8">
               Join thousands of professionals who are already using Perma to showcase their work
             </p>
-            <Link to="/sign-up" className="btn-primary text-white px-8 py-4 rounded-lg text-lg font-semibold">
+            <Link to="/sign-up" className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-all duration-200">
               Create Your Perma Link
             </Link>
           </div>

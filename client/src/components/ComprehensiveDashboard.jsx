@@ -232,24 +232,22 @@ const ComprehensiveDashboard = () => {
   // Add new link
   const handleAddLink = async (linkData) => {
     try {
-      const token = getToken();
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/links`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(linkData)
-      });
+      // Create a new link with a unique ID and default values
+      const newLink = {
+        ...linkData,
+        id: Date.now().toString(),
+        clicks: 0,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        isVisible: true
+      };
 
-      if (response.ok) {
-        const data = await response.json();
-        setLinks(prev => [...prev, data.link]);
-        setIsAddModalOpen(false);
-        toast.success('Link added successfully');
-      } else {
-        throw new Error('Failed to add link');
-      }
+      // Add the link to local state
+      setLinks(prev => [...prev, newLink]);
+      setIsAddModalOpen(false);
+      toast.success('Link added successfully');
+      
+      console.log('New link added:', newLink); // Debug log
     } catch (err) {
       console.error('Error adding link:', err);
       toast.error('Failed to add link');
@@ -635,7 +633,7 @@ const ComprehensiveDashboard = () => {
       <AddLinkModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
-        onSave={handleAddLink}
+        onAdd={handleAddLink}
         editingLink={editingLink}
         onEdit={handleEditLink}
       />

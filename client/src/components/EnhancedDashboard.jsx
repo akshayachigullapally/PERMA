@@ -358,7 +358,7 @@ const EnhancedDashboard = () => {
             </button>
             <button 
               onClick={() => setIsAddModalOpen(true)}
-              className="flex items-center space-x-2 btn-primary text-white px-4 py-2 rounded-lg"
+              className="flex items-center space-x-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-4 py-2 rounded-lg transition-all duration-200"
             >
               <PlusIcon className="h-5 w-5" />
               <span>Add Link</span>

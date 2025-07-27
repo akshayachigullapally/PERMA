@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import ProfileDropdown from './ProfileDropdown';
 import { 
   Bars3Icon,
   XMarkIcon,
@@ -15,9 +16,25 @@ import {
 } from '@heroicons/react/24/outline';
 
 const Header = () => {
-  const { isSignedIn, user, signOut } = useAuth();
+  const { isSignedIn, user } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const location = useLocation();
+  const profileRef = useRef(null);
+
+  // Close profile dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setIsProfileOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
@@ -83,26 +100,18 @@ const Header = () => {
                 <span className="hidden sm:block text-white font-medium">
                   {user?.displayName || user?.username || 'User'}
                 </span>
-                <div className="relative group">
-                  <button className="w-10 h-10 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center text-white font-bold">
-                    {(user?.displayName || user?.username || 'U')[0].toUpperCase()}
+                <div className="relative" ref={profileRef}>
+                  <button 
+                    onClick={() => setIsProfileOpen(!isProfileOpen)}
+                    className="w-10 h-10 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center text-white font-bold hover:from-purple-600 hover:to-blue-600 transition-all duration-200"
+                  >
+                    {user?.profileImage ? (
+                      <img src={user.profileImage} alt="Profile" className="w-full h-full rounded-full object-cover" />
+                    ) : (
+                      (user?.displayName || user?.username || 'U')[0].toUpperCase()
+                    )}
                   </button>
-                  <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                    <div className="py-1">
-                      <Link
-                        to="/dashboard"
-                        className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
-                      >
-                        Dashboard
-                      </Link>
-                      <button
-                        onClick={signOut}
-                        className="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
-                      >
-                        Sign Out
-                      </button>
-                    </div>
-                  </div>
+                  <ProfileDropdown isOpen={isProfileOpen} />
                 </div>
               </>
             ) : (

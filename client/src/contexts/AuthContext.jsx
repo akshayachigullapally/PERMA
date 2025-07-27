@@ -97,6 +97,10 @@ const AuthProvider = ({ children }) => {
     return localStorage.getItem('token');
   };
 
+  const updateUser = (updatedUser) => {
+    setUser(updatedUser);
+  };
+
   const value = {
     user,
     loading,
@@ -104,6 +108,7 @@ const AuthProvider = ({ children }) => {
     signUp,
     signOut,
     getToken,
+    updateUser,
     isSignedIn: !!user
   };
 

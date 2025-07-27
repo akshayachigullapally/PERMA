@@ -108,7 +108,7 @@ const Dashboard = () => {
       clicks: 0,
       isVisible: true,
     };
-    setLinks([...links, link]);
+    setLinks(prevLinks => [...prevLinks, link]);
     setIsAddModalOpen(false);
     toast.success('Link added successfully!');
   };
@@ -198,7 +198,7 @@ const Dashboard = () => {
             </button>
             <button 
               onClick={() => setIsAddModalOpen(true)}
-              className="flex items-center space-x-2 btn-primary text-white px-4 py-2 rounded-lg"
+              className="flex items-center space-x-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-4 py-2 rounded-lg transition-all duration-200"
             >
               <PlusIcon className="h-5 w-5" />
               <span>Add Link</span>
@@ -233,7 +233,7 @@ const Dashboard = () => {
             <p className="text-gray-300 mb-6">Add your first link to get started</p>
             <button 
               onClick={() => setIsAddModalOpen(true)}
-              className="btn-primary text-white px-6 py-3 rounded-lg"
+              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-3 rounded-lg transition-all duration-200"
             >
               Add Your First Link
             </button>

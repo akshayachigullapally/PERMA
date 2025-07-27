@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { Toaster } from 'react-hot-toast'
 import { useAuth } from './hooks/useAuth'
 import Homepage from './components/Homepage'
 import ComprehensiveDashboard from './components/ComprehensiveDashboard'
@@ -76,6 +77,31 @@ function App() {
 
       {/* Footer - Show on all pages except auth pages */}
       {!isAuthPage && <Footer />}
+      
+      {/* Toast Notifications */}
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: '#1f2937',
+            color: '#f9fafb',
+            border: '1px solid #374151',
+          },
+          success: {
+            iconTheme: {
+              primary: '#10b981',
+              secondary: '#f9fafb',
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: '#ef4444',
+              secondary: '#f9fafb',
+            },
+          },
+        }}
+      />
     </div>
   )
 }

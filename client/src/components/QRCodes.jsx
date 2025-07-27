@@ -67,15 +67,34 @@ const QRCodes = () => {
     return `${baseUrl}?${params.toString()}`;
   };
 
-  const downloadQR = () => {
-    const qrImageUrl = generateQRUrl();
-    const link = document.createElement('a');
-    link.href = qrImageUrl;
-    link.download = `perma-qr-${userProfile?.username || 'code'}.png`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    toast.success('QR Code downloaded!');
+  const downloadQR = async () => {
+    try {
+      const qrImageUrl = generateQRUrl();
+      
+      // Fetch the image as a blob to handle CORS
+      const response = await fetch(qrImageUrl);
+      if (!response.ok) {
+        throw new Error('Failed to fetch QR code image');
+      }
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `perma-qr-${userProfile?.username || 'code'}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Clean up the blob URL
+      window.URL.revokeObjectURL(url);
+      
+      toast.success('QR Code downloaded!');
+    } catch (error) {
+      console.error('Download error:', error);
+      toast.error('Failed to download QR code. Please try again.');
+    }
   };
 
   const copyQRUrl = () => {

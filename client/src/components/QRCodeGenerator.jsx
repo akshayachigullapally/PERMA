@@ -48,12 +48,12 @@ const QRCodeGenerator = ({ isOpen, onClose, link }) => {
   const downloadQRCode = () => {
     if (!qrDataUrl) return;
 
-    const link = document.createElement('a');
-    link.href = qrDataUrl;
-    link.download = `${link.title || 'qr-code'}.png`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    const downloadLink = document.createElement('a');
+    downloadLink.href = qrDataUrl;
+    downloadLink.download = `${link.title || 'qr-code'}.png`;
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
     
     toast.success('QR code downloaded');
   };

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useAnalytics } from '../hooks/useAnalytics';
 import {
@@ -18,18 +18,18 @@ const Analytics = () => {
   const { userStats, loading, error, fetchUserStats } = useAnalytics();
   const [selectedPeriod, setSelectedPeriod] = useState('30d');
 
-  useEffect(() => {
-    const loadAnalytics = async () => {
-      if (user) {
-        const token = getToken();
-        if (token) {
-          fetchUserStats(token);
-        }
+  const loadAnalytics = useCallback(async () => {
+    if (user) {
+      const token = getToken();
+      if (token) {
+        fetchUserStats(token);
       }
-    };
-
-    loadAnalytics();
+    }
   }, [user, getToken, fetchUserStats]);
+
+  useEffect(() => {
+    loadAnalytics();
+  }, [loadAnalytics]);
 
   const periods = [
     { value: '7d', label: '7 Days' },

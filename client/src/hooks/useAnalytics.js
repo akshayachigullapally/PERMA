@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 
 export const useAnalytics = () => {
   const [platformStats, setPlatformStats] = useState(null);
@@ -6,7 +6,7 @@ export const useAnalytics = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const fetchPlatformStats = async () => {
+  const fetchPlatformStats = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -35,9 +35,9 @@ export const useAnalytics = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []); // No dependencies needed
 
-  const fetchUserStats = async (token) => {
+  const fetchUserStats = useCallback(async (token) => {
     try {
       setLoading(true);
       setError(null);
@@ -60,7 +60,7 @@ export const useAnalytics = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []); // No dependencies needed for token parameter
 
   return {
     platformStats,

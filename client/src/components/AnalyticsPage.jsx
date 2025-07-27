@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useAnalytics } from '../hooks/useAnalytics';
 import {
@@ -18,7 +18,7 @@ const AnalyticsPage = () => {
   const { userStats, loading, fetchUserStats } = useAnalytics();
   const [timeframe, setTimeframe] = useState('30d');
 
-  useEffect(() => {
+  const loadUserStats = useCallback(() => {
     if (user) {
       const token = getToken();
       if (token) {
@@ -27,11 +27,15 @@ const AnalyticsPage = () => {
     }
   }, [user, getToken, fetchUserStats]);
 
+  useEffect(() => {
+    loadUserStats();
+  }, [loadUserStats]);
+
   if (loading) {
     return <LoadingSpinner />;
   }
 
-  const StatCard = ({ title, value, change, icon: Icon, trend }) => (
+  const StatCard = ({ title, value, change, icon, trend }) => (
     <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
       <div className="flex items-center justify-between">
         <div>
@@ -48,7 +52,7 @@ const AnalyticsPage = () => {
           )}
         </div>
         <div className="p-3 bg-blue-500/20 rounded-lg">
-          <Icon className="w-6 h-6 text-blue-400" />
+          {icon && React.createElement(icon, { className: "w-6 h-6 text-blue-400" })}
         </div>
       </div>
     </div>

@@ -10,8 +10,6 @@ import {
 } from '@heroicons/react/24/outline';
 
 const Footer = () => {
-  const currentYear = new Date().getFullYear();
-
   const footerLinks = {
     product: [
       { name: 'Dashboard', href: '/dashboard', icon: LinkIcon },
@@ -146,22 +144,6 @@ const Footer = () => {
               ))}
             </ul>
           </div>
-          </div>
-
-          {/* Bottom Section */}
-          <div className="mt-8 pt-6 border-t border-gray-700">
-            <div className="flex flex-col md:flex-row justify-between items-center">
-              <p className="text-gray-400 text-sm">
-                © {currentYear} Perma. All rights reserved.
-              </p>
-              <div className="mt-4 md:mt-0 flex items-center space-x-6">
-                <span className="text-gray-400 text-sm">Made with ❤️ for creators</span>
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                  <span className="text-gray-400 text-sm">All systems operational</span>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>

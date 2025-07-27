@@ -303,8 +303,8 @@ const LandingPage = () => {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-4 border-t border-white/20">
-        <div className="max-w-6xl mx-auto">
+      <footer className="py-12 w-full border-t border-white/20">
+        <div className="w-full px-4">
           <div className="grid md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center space-x-2 mb-4">

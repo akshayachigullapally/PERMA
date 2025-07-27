@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
+import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/solid';
 
 const SignIn = () => {
   const [email, setEmail] = useState('');
@@ -80,13 +80,13 @@ const SignIn = () => {
               />
               <button
                 type="button"
-                className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center z-20 cursor-pointer bg-transparent border-none"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? (
-                  <EyeSlashIcon className="h-5 w-5 text-gray-400 hover:text-gray-300" />
+                  <EyeSlashIcon className="h-5 w-5 text-gray-300 hover:text-white transition-colors" />
                 ) : (
-                  <EyeIcon className="h-5 w-5 text-gray-400 hover:text-gray-300" />
+                  <EyeIcon className="h-5 w-5 text-gray-300 hover:text-white transition-colors" />
                 )}
               </button>
             </div>

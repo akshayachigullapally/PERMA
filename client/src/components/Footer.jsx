@@ -41,8 +41,9 @@ const Footer = () => {
 
   return (
     <footer className="glass-effect mt-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+      <div className="w-full px-0 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Brand */}
           <div className="lg:col-span-1">
             <Link to="/" className="flex items-center space-x-2 mb-4">
@@ -145,19 +146,20 @@ const Footer = () => {
               ))}
             </ul>
           </div>
-        </div>
+          </div>
 
-        {/* Bottom Section */}
-        <div className="mt-12 pt-8 border-t border-white/20">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-300 text-sm">
-              © {currentYear} Perma. All rights reserved.
-            </p>
-            <div className="mt-4 md:mt-0 flex items-center space-x-6">
-              <span className="text-gray-300 text-sm">Made with ❤️ for creators</span>
-              <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                <span className="text-gray-300 text-sm">All systems operational</span>
+          {/* Bottom Section */}
+          <div className="mt-12 pt-8 border-t border-white/20">
+            <div className="flex flex-col md:flex-row justify-between items-center">
+              <p className="text-gray-300 text-sm">
+                © {currentYear} Perma. All rights reserved.
+              </p>
+              <div className="mt-4 md:mt-0 flex items-center space-x-6">
+                <span className="text-gray-300 text-sm">Made with ❤️ for creators</span>
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                  <span className="text-gray-300 text-sm">All systems operational</span>
+                </div>
               </div>
             </div>
           </div>

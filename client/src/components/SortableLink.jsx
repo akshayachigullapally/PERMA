@@ -21,7 +21,6 @@ const SortableLink = ({
   onCopy, 
   onGenerateQR 
 }) => {
-  const [isHovered, setIsHovered] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({
     title: link.title,
@@ -97,15 +96,15 @@ const SortableLink = ({
     return (
       <div
         ref={setNodeRef}
-        className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20"
+        className="bg-white/10 backdrop-blur-sm rounded-xl p-3 sm:p-4 border border-white/20"
       >
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           <div>
             <input
               type="text"
               value={editData.title}
               onChange={(e) => setEditData(prev => ({ ...prev, title: e.target.value }))}
-              className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
               placeholder="Link title"
             />
           </div>
@@ -114,7 +113,7 @@ const SortableLink = ({
               type="url"
               value={editData.url}
               onChange={(e) => setEditData(prev => ({ ...prev, url: e.target.value }))}
-              className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
               placeholder="https://example.com"
             />
           </div>
@@ -123,20 +122,20 @@ const SortableLink = ({
               type="text"
               value={editData.description}
               onChange={(e) => setEditData(prev => ({ ...prev, description: e.target.value }))}
-              className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
               placeholder="Description (optional)"
             />
           </div>
-          <div className="flex space-x-2">
+          <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
             <button
               onClick={handleSaveEdit}
-              className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+              className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors text-sm sm:text-base"
             >
               Save
             </button>
             <button
               onClick={handleCancelEdit}
-              className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors"
+              className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors text-sm sm:text-base"
             >
               Cancel
             </button>
@@ -151,103 +150,142 @@ const SortableLink = ({
       ref={setNodeRef}
       style={style}
       className={`
-        bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20 cursor-pointer group
+        bg-white/10 backdrop-blur-sm rounded-xl p-3 sm:p-4 border border-white/20 cursor-pointer group
         hover:bg-white/15 transition-all duration-200 
         ${isDragging ? 'shadow-2xl' : 'hover:shadow-lg'}
         ${!link.isActive ? 'opacity-60' : ''}
       `}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
     >
       <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4 flex-1 min-w-0">
+        <div className="flex items-center space-x-2 sm:space-x-4 flex-1 min-w-0">
           {/* Drag Handle */}
           <div
             {...attributes}
             {...listeners}
-            className="cursor-grab active:cursor-grabbing p-1 rounded hover:bg-white/10"
+            className="cursor-grab active:cursor-grabbing p-1 rounded hover:bg-white/10 flex-shrink-0"
           >
-            <Bars3Icon className="w-5 h-5 text-gray-400" />
+            <Bars3Icon className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
           </div>
 
           {/* Link Content */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center space-x-2 mb-1">
-              <h3 className="text-white font-medium truncate">{link.title}</h3>
+              <h3 className="text-white font-medium truncate text-sm sm:text-base">{link.title}</h3>
               {!link.isActive && (
-                <EyeSlashIcon className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                <EyeSlashIcon className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 flex-shrink-0" />
               )}
             </div>
-            <p className="text-gray-400 text-sm truncate">{link.url}</p>
+            <p className="text-gray-400 text-xs sm:text-sm truncate">{link.url}</p>
             {link.description && (
-              <p className="text-gray-500 text-xs mt-1 truncate">{link.description}</p>
+              <p className="text-gray-500 text-xs mt-1 truncate hidden sm:block">{link.description}</p>
             )}
           </div>
 
           {/* Stats */}
-          <div className="text-right">
-            <div className="flex items-center space-x-2 text-gray-400 text-sm">
-              <ChartBarIcon className="w-4 h-4" />
-              <span>{link.clicks || 0} clicks</span>
+          <div className="text-right flex-shrink-0">
+            <div className="flex items-center space-x-1 sm:space-x-2 text-gray-400 text-xs sm:text-sm">
+              <ChartBarIcon className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">{link.clicks || 0} clicks</span>
+              <span className="sm:hidden">{link.clicks || 0}</span>
             </div>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className={`flex items-center space-x-1 transition-opacity duration-200 ${
-          isHovered ? 'opacity-100' : 'opacity-0'
-        }`}>
-          <button
-            onClick={openLink}
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-            title="Open link"
-          >
-            <ArrowTopRightOnSquareIcon className="w-4 h-4 text-gray-400 hover:text-white" />
-          </button>
-          
-          <button
-            onClick={copyLink}
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-            title="Copy link"
-          >
-            <ClipboardDocumentIcon className="w-4 h-4 text-gray-400 hover:text-white" />
-          </button>
+        <div className="flex items-center space-x-1 ml-2 sm:opacity-70 sm:group-hover:opacity-100 transition-opacity duration-200">
+          {/* Desktop: Show all buttons */}
+          <div className="hidden sm:flex items-center space-x-1">
+            <button
+              onClick={openLink}
+              className="p-1.5 sm:p-2 hover:bg-white/10 rounded-lg transition-colors"
+              title="Open link"
+            >
+              <ArrowTopRightOnSquareIcon className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 hover:text-white" />
+            </button>
+            
+            <button
+              onClick={copyLink}
+              className="p-1.5 sm:p-2 hover:bg-white/10 rounded-lg transition-colors"
+              title="Copy link"
+            >
+              <ClipboardDocumentIcon className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 hover:text-white" />
+            </button>
 
-          <button
-            onClick={handleGenerateQR}
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-            title="Generate QR code"
-          >
-            <QrCodeIcon className="w-4 h-4 text-gray-400 hover:text-white" />
-          </button>
-          
-          <button
-            onClick={handleEdit}
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-            title="Edit link"
-          >
-            <PencilIcon className="w-4 h-4 text-gray-400 hover:text-white" />
-          </button>
+            <button
+              onClick={handleGenerateQR}
+              className="p-1.5 sm:p-2 hover:bg-white/10 rounded-lg transition-colors"
+              title="Generate QR code"
+            >
+              <QrCodeIcon className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 hover:text-white" />
+            </button>
+            
+            <button
+              onClick={handleEdit}
+              className="p-1.5 sm:p-2 hover:bg-white/10 rounded-lg transition-colors"
+              title="Edit link"
+            >
+              <PencilIcon className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 hover:text-white" />
+            </button>
 
-          <button
-            onClick={handleToggleVisibility}
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-            title={link.isActive ? 'Hide link' : 'Show link'}
-          >
-            {link.isActive ? (
-              <EyeIcon className="w-4 h-4 text-gray-400 hover:text-white" />
-            ) : (
-              <EyeSlashIcon className="w-4 h-4 text-gray-400 hover:text-white" />
-            )}
-          </button>
-          
-          <button
-            onClick={handleDelete}
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-            title="Delete link"
-          >
-            <TrashIcon className="w-4 h-4 text-gray-400 hover:text-red-400" />
-          </button>
+            <button
+              onClick={handleToggleVisibility}
+              className="p-1.5 sm:p-2 hover:bg-white/10 rounded-lg transition-colors"
+              title={link.isActive ? 'Hide link' : 'Show link'}
+            >
+              {link.isActive ? (
+                <EyeIcon className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 hover:text-white" />
+              ) : (
+                <EyeSlashIcon className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 hover:text-white" />
+              )}
+            </button>
+            
+            <button
+              onClick={handleDelete}
+              className="p-1.5 sm:p-2 hover:bg-white/10 rounded-lg transition-colors"
+              title="Delete link"
+            >
+              <TrashIcon className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 hover:text-red-400" />
+            </button>
+          </div>
+
+          {/* Mobile: Show essential buttons */}
+          <div className="flex sm:hidden items-center space-x-1">
+            <button
+              onClick={copyLink}
+              className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
+              title="Copy"
+            >
+              <ClipboardDocumentIcon className="w-4 h-4 text-gray-400 hover:text-white" />
+            </button>
+            
+            <button
+              onClick={handleEdit}
+              className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
+              title="Edit"
+            >
+              <PencilIcon className="w-4 h-4 text-gray-400 hover:text-white" />
+            </button>
+            
+            <button
+              onClick={handleToggleVisibility}
+              className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
+              title={link.isActive ? 'Hide' : 'Show'}
+            >
+              {link.isActive ? (
+                <EyeIcon className="w-4 h-4 text-gray-400 hover:text-white" />
+              ) : (
+                <EyeSlashIcon className="w-4 h-4 text-gray-400 hover:text-white" />
+              )}
+            </button>
+
+            <button
+              onClick={handleDelete}
+              className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
+              title="Delete"
+            >
+              <TrashIcon className="w-4 h-4 text-gray-400 hover:text-red-400" />
+            </button>
+          </div>
         </div>
       </div>
     </div>

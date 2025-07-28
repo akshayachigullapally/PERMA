@@ -128,32 +128,32 @@ const QRCodes = () => {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2 flex items-center">
-            <QrCodeIcon className="h-8 w-8 text-blue-400 mr-3" />
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2 flex items-center">
+            <QrCodeIcon className="h-6 w-6 sm:h-8 sm:w-8 text-blue-400 mr-2 sm:mr-3" />
             QR Code Generator
           </h1>
-          <p className="text-gray-400">
+          <p className="text-gray-400 text-sm sm:text-base">
             Generate custom QR codes for your Perma profile to share offline
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
           {/* QR Code Preview */}
-          <div className="bg-gray-800 rounded-xl p-6">
-            <h2 className="text-xl font-semibold text-white mb-6">QR Code Preview</h2>
+          <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
+            <h2 className="text-lg sm:text-xl font-semibold text-white mb-4 sm:mb-6">QR Code Preview</h2>
             
             <div className="text-center">
-              <div className="inline-block p-6 bg-white rounded-xl mb-6">
+              <div className="inline-block p-4 sm:p-6 bg-white rounded-xl mb-4 sm:mb-6">
                 <img 
                   src={generateQRUrl()} 
                   alt="QR Code" 
-                  className="mx-auto"
+                  className="mx-auto max-w-full h-auto"
                   style={{ 
-                    width: qrSettings.size, 
-                    height: qrSettings.size 
+                    width: Math.min(qrSettings.size, 200), 
+                    height: Math.min(qrSettings.size, 200) 
                   }}
                 />
               </div>
@@ -191,13 +191,13 @@ const QRCodes = () => {
           </div>
 
           {/* Customization Settings */}
-          <div className="bg-gray-800 rounded-xl p-6">
-            <h2 className="text-xl font-semibold text-white mb-6 flex items-center">
-              <CogIcon className="h-6 w-6 text-gray-400 mr-2" />
+          <div className="bg-gray-800 rounded-xl p-4 sm:p-6">
+            <h2 className="text-lg sm:text-xl font-semibold text-white mb-4 sm:mb-6 flex items-center">
+              <CogIcon className="h-5 w-5 sm:h-6 sm:w-6 text-gray-400 mr-2" />
               Customization
             </h2>
 
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               {/* Size */}
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">

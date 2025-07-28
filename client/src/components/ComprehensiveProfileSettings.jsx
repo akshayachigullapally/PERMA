@@ -268,16 +268,16 @@ const ComprehensiveProfileSettings = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 p-4 sm:p-6">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Profile Settings</h1>
-          <p className="text-gray-400">Manage your account settings and preferences</p>
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Profile Settings</h1>
+          <p className="text-gray-400 text-sm sm:text-base">Manage your account settings and preferences</p>
         </div>
 
         {/* Tabs */}
-        <div className="flex space-x-1 mb-8">
+        <div className="flex space-x-1 mb-6 sm:mb-8">
           {[
             { id: 'profile', label: 'Profile', icon: UserIcon },
             { id: 'security', label: 'Security', icon: LockClosedIcon }
@@ -285,27 +285,28 @@ const ComprehensiveProfileSettings = () => {
             <button
               key={id}
               onClick={() => setActiveTab(id)}
-              className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all ${
+              className={`flex items-center space-x-2 px-3 sm:px-4 py-2 rounded-lg font-medium transition-all text-sm sm:text-base ${
                 activeTab === id
                   ? 'bg-blue-500 text-white'
                   : 'bg-white/10 text-gray-300 hover:bg-white/20'
               }`}
             >
               <IconComponent className="w-4 h-4" />
-              <span>{label}</span>
+              <span className="hidden sm:inline">{label}</span>
+              <span className="sm:hidden">{label.charAt(0)}</span>
             </button>
           ))}
         </div>
 
         {/* Profile Tab */}
         {activeTab === 'profile' && (
-          <div className="space-y-8">
+          <div className="space-y-6 sm:space-y-8">
             {/* Profile Picture Section */}
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
-              <h2 className="text-xl font-bold text-white mb-6">Profile Picture</h2>
-              <div className="flex items-center space-x-6">
-                <div className="relative">
-                  <div className="w-24 h-24 rounded-full bg-white/10 border border-white/20 flex items-center justify-center overflow-hidden">
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-6 border border-white/20">
+              <h2 className="text-lg sm:text-xl font-bold text-white mb-4 sm:mb-6">Profile Picture</h2>
+              <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-6">
+                <div className="relative mx-auto sm:mx-0">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-white/10 border border-white/20 flex items-center justify-center overflow-hidden">
                     {profile.profileImage ? (
                       <img
                         src={profile.profileImage}
@@ -313,7 +314,7 @@ const ComprehensiveProfileSettings = () => {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <UserIcon className="w-12 h-12 text-gray-400" />
+                      <UserIcon className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400" />
                     )}
                   </div>
                   {uploadingImage && (

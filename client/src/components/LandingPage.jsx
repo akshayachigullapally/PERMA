@@ -119,18 +119,18 @@ const LandingPage = () => {
       {/* Navigation */}
       <nav className="glass-effect sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
+          <div className="flex justify-between items-center py-3 sm:py-4">
             <div className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">P</span>
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-base sm:text-lg">P</span>
               </div>
-              <span className="text-white font-bold text-xl">Perma</span>
+              <span className="text-white font-bold text-lg sm:text-xl">Perma</span>
             </div>
-            <div className="flex items-center space-x-4">
-              <Link to="/sign-in" className="text-white hover:text-gray-200 transition-colors">
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              <Link to="/sign-in" className="text-white hover:text-gray-200 transition-colors text-sm sm:text-base">
                 Sign In
               </Link>
-              <Link to="/sign-up" className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-2 rounded-lg transition-all duration-200">
+              <Link to="/sign-up" className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-3 py-2 sm:px-6 rounded-lg transition-all duration-200 text-sm sm:text-base">
                 Get Started
               </Link>
             </div>
@@ -139,50 +139,50 @@ const LandingPage = () => {
       </nav>
 
       {/* Hero Section */}
-      <section className="py-20 px-4">
+      <section className="py-12 sm:py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 sm:mb-6 leading-tight">
             Your identity.{' '}
             <span className="gradient-text">All in one link.</span>
           </h1>
-          <p className="text-xl text-gray-200 mb-8 max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg md:text-xl text-gray-200 mb-6 sm:mb-8 max-w-2xl mx-auto px-4">
             Share smarter. Connect faster. Make every user's online presence instantly accessible, 
             secure, trackable and—even a little fun.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-            <Link to="/sign-up" className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-8 py-4 rounded-lg text-lg font-semibold flex items-center space-x-2 transition-all duration-200">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-8 sm:mb-12 px-4">
+            <Link to="/sign-up" className="w-full sm:w-auto bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-base sm:text-lg font-semibold flex items-center justify-center space-x-2 transition-all duration-200">
               <span>Start Building Your Perma</span>
-              <ArrowRightIcon className="h-5 w-5" />
+              <ArrowRightIcon className="h-4 w-4 sm:h-5 sm:w-5" />
             </Link>
-            <div className="text-gray-200">
+            <div className="text-gray-200 text-sm sm:text-base text-center">
               Free forever • No credit card required
             </div>
           </div>
           
           {/* Demo Link */}
-          <div className="glass-effect rounded-xl p-6 max-w-md mx-auto">
+          <div className="glass-effect rounded-xl p-4 sm:p-6 max-w-xs sm:max-w-md mx-auto">
             <div className="flex items-center justify-center space-x-2 text-white">
-              <LinkIcon className="h-5 w-5 text-gray-300" />
-              <span className="font-mono text-lg">perma.in/yourname</span>
+              <LinkIcon className="h-4 w-4 sm:h-5 sm:w-5 text-gray-300" />
+              <span className="font-mono text-sm sm:text-lg">perma.in/yourname</span>
             </div>
           </div>
         </div>
       </section>
 
       {/* Features Grid */}
-      <section className="py-20 px-4">
+      <section className="py-12 sm:py-20 px-4">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-16">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white text-center mb-8 sm:mb-16 px-4">
             Everything you need to shine online
           </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
             {features.map((feature, index) => (
-              <div key={index} className="glass-effect rounded-xl p-6 card-hover">
-                <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mb-4">
-                  <feature.icon className="h-6 w-6 text-white" />
+              <div key={index} className="glass-effect rounded-xl p-4 sm:p-6 card-hover">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mb-3 sm:mb-4">
+                  <feature.icon className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-3">{feature.title}</h3>
-                <p className="text-gray-200">{feature.description}</p>
+                <h3 className="text-lg sm:text-xl font-semibold text-white mb-2 sm:mb-3">{feature.title}</h3>
+                <p className="text-gray-200 text-sm sm:text-base">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -190,12 +190,12 @@ const LandingPage = () => {
       </section>
 
       {/* Testimonials */}
-      <section className="py-20 px-4">
+      <section className="py-12 sm:py-20 px-4">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-16">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white text-center mb-8 sm:mb-16 px-4">
             Loved by professionals worldwide
           </h2>
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
             {testimonials.map((testimonial, index) => (
               <div key={index} className="glass-effect rounded-xl p-6">
                 <div className="flex items-center mb-4">

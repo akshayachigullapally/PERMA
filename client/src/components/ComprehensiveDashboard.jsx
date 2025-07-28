@@ -412,12 +412,12 @@ const ComprehensiveDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-900">
-      <div className="max-w-4xl mx-auto px-6 py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
         {/* Header Section */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 rounded-full bg-white/10 border border-white/20 flex items-center justify-center overflow-hidden">
+        <div className="mb-6 sm:mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 space-y-4 sm:space-y-0">
+            <div className="flex items-center space-x-3 sm:space-x-4">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-white/10 border border-white/20 flex items-center justify-center overflow-hidden">
                 {userProfile?.profileImage ? (
                   <img
                     src={userProfile.profileImage}
@@ -425,29 +425,29 @@ const ComprehensiveDashboard = () => {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <UserIcon className="w-8 h-8 text-gray-400" />
+                  <UserIcon className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400" />
                 )}
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-white">
+                <h1 className="text-xl sm:text-2xl font-bold text-white">
                   Welcome back, {userProfile?.displayName || userProfile?.username}
                 </h1>
-                <p className="text-gray-400">
+                <p className="text-gray-400 text-sm sm:text-base">
                   {userProfile?.bio || 'Manage your links and track performance'}
                 </p>
               </div>
             </div>
-            <div className="flex space-x-2">
+            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
               <button
                 onClick={handleShareProfile}
-                className="flex items-center space-x-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+                className="flex items-center justify-center space-x-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors text-sm"
               >
                 <ShareIcon className="w-4 h-4" />
                 <span>Share Profile</span>
               </button>
               <button
                 onClick={handleCopyProfile}
-                className="flex items-center space-x-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors"
+                className="flex items-center justify-center space-x-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors text-sm"
               >
                 <LinkIcon className="w-4 h-4" />
                 <span>Copy URL</span>
@@ -456,57 +456,57 @@ const ComprehensiveDashboard = () => {
           </div>
 
           {/* Quick Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-            <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
-              <div className="flex items-center space-x-3">
-                <div className="p-2 bg-blue-500/20 rounded-lg">
-                  <EyeIcon className="w-5 h-5 text-blue-400" />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+            <div className="bg-white/10 backdrop-blur-md rounded-xl p-3 sm:p-4 border border-white/20">
+              <div className="flex items-center space-x-2 sm:space-x-3">
+                <div className="p-1.5 sm:p-2 bg-blue-500/20 rounded-lg">
+                  <EyeIcon className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
                 </div>
                 <div>
-                  <p className="text-gray-400 text-sm">Profile Views</p>
-                  <p className="text-xl font-bold text-white">
+                  <p className="text-gray-400 text-xs sm:text-sm">Profile Views</p>
+                  <p className="text-lg sm:text-xl font-bold text-white">
                     {userStats?.totalViews?.toLocaleString() || '0'}
                   </p>
                 </div>
               </div>
             </div>
             
-            <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
-              <div className="flex items-center space-x-3">
-                <div className="p-2 bg-green-500/20 rounded-lg">
-                  <CursorArrowRaysIcon className="w-5 h-5 text-green-400" />
+            <div className="bg-white/10 backdrop-blur-md rounded-xl p-3 sm:p-4 border border-white/20">
+              <div className="flex items-center space-x-2 sm:space-x-3">
+                <div className="p-1.5 sm:p-2 bg-green-500/20 rounded-lg">
+                  <CursorArrowRaysIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-400" />
                 </div>
                 <div>
-                  <p className="text-gray-400 text-sm">Total Clicks</p>
-                  <p className="text-xl font-bold text-white">
+                  <p className="text-gray-400 text-xs sm:text-sm">Total Clicks</p>
+                  <p className="text-lg sm:text-xl font-bold text-white">
                     {userStats?.totalClicks?.toLocaleString() || '0'}
                   </p>
                 </div>
               </div>
             </div>
             
-            <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
-              <div className="flex items-center space-x-3">
-                <div className="p-2 bg-purple-500/20 rounded-lg">
-                  <LinkIcon className="w-5 h-5 text-purple-400" />
+            <div className="bg-white/10 backdrop-blur-md rounded-xl p-3 sm:p-4 border border-white/20">
+              <div className="flex items-center space-x-2 sm:space-x-3">
+                <div className="p-1.5 sm:p-2 bg-purple-500/20 rounded-lg">
+                  <LinkIcon className="w-4 h-4 sm:w-5 sm:h-5 text-purple-400" />
                 </div>
                 <div>
-                  <p className="text-gray-400 text-sm">Active Links</p>
-                  <p className="text-xl font-bold text-white">
+                  <p className="text-gray-400 text-xs sm:text-sm">Active Links</p>
+                  <p className="text-lg sm:text-xl font-bold text-white">
                     {links.filter(link => link.isActive).length}
                   </p>
                 </div>
               </div>
             </div>
             
-            <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
-              <div className="flex items-center space-x-3">
-                <div className="p-2 bg-yellow-500/20 rounded-lg">
-                  <ChartBarIcon className="w-5 h-5 text-yellow-400" />
+            <div className="bg-white/10 backdrop-blur-md rounded-xl p-3 sm:p-4 border border-white/20">
+              <div className="flex items-center space-x-2 sm:space-x-3">
+                <div className="p-1.5 sm:p-2 bg-yellow-500/20 rounded-lg">
+                  <ChartBarIcon className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400" />
                 </div>
                 <div>
-                  <p className="text-gray-400 text-sm">Click Rate</p>
-                  <p className="text-xl font-bold text-white">
+                  <p className="text-gray-400 text-xs sm:text-sm">Click Rate</p>
+                  <p className="text-lg sm:text-xl font-bold text-white">
                     {userStats?.clickThroughRate || 0}%
                   </p>
                 </div>
@@ -516,12 +516,12 @@ const ComprehensiveDashboard = () => {
         </div>
 
         {/* Links Section */}
-        <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-white">Your Links</h2>
+        <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-6 border border-white/20">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 space-y-3 sm:space-y-0">
+            <h2 className="text-lg sm:text-xl font-bold text-white">Your Links</h2>
             <button
               onClick={() => setIsAddModalOpen(true)}
-              className="flex items-center space-x-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+              className="flex items-center justify-center space-x-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors text-sm w-full sm:w-auto"
             >
               <PlusIcon className="w-4 h-4" />
               <span>Add Link</span>
@@ -551,15 +551,15 @@ const ComprehensiveDashboard = () => {
               </SortableContext>
             </DndContext>
           ) : (
-            <div className="text-center py-12">
-              <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
-                <LinkIcon className="w-8 h-8 text-gray-400" />
+            <div className="text-center py-8 sm:py-12">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
+                <LinkIcon className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400" />
               </div>
-              <h3 className="text-lg font-medium text-white mb-2">No links yet</h3>
-              <p className="text-gray-400 mb-6">Start building your link collection</p>
+              <h3 className="text-base sm:text-lg font-medium text-white mb-2">No links yet</h3>
+              <p className="text-gray-400 mb-4 sm:mb-6 text-sm sm:text-base">Start building your link collection</p>
               <button
                 onClick={() => setIsAddModalOpen(true)}
-                className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+                className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors w-full sm:w-auto"
               >
                 Add Your First Link
               </button>
@@ -568,20 +568,20 @@ const ComprehensiveDashboard = () => {
         </div>
 
         {/* Profile Preview */}
-        <div className="mt-8 bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-bold text-white">Profile Preview</h3>
+        <div className="mt-6 sm:mt-8 bg-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-6 border border-white/20">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 space-y-2 sm:space-y-0">
+            <h3 className="text-base sm:text-lg font-bold text-white">Profile Preview</h3>
             <div className="flex items-center space-x-2">
               <GlobeAltIcon className="w-4 h-4 text-gray-400" />
-              <span className="text-gray-400 text-sm">
+              <span className="text-gray-400 text-xs sm:text-sm truncate">
                 {window.location.origin}/profile/{userProfile?.username}
               </span>
             </div>
           </div>
           
-          <div className="bg-white/5 rounded-xl p-4">
-            <div className="flex items-center space-x-4 mb-4">
-              <div className="w-12 h-12 rounded-full bg-white/10 border border-white/20 flex items-center justify-center overflow-hidden">
+          <div className="bg-white/5 rounded-xl p-3 sm:p-4">
+            <div className="flex items-center space-x-3 sm:space-x-4 mb-4">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/10 border border-white/20 flex items-center justify-center overflow-hidden">
                 {userProfile?.profileImage ? (
                   <img
                     src={userProfile.profileImage}
@@ -589,14 +589,14 @@ const ComprehensiveDashboard = () => {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <UserIcon className="w-6 h-6 text-gray-400" />
+                  <UserIcon className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400" />
                 )}
               </div>
               <div>
-                <h4 className="text-white font-medium">
+                <h4 className="text-white font-medium text-sm sm:text-base">
                   {userProfile?.displayName || userProfile?.username}
                 </h4>
-                <p className="text-gray-400 text-sm">@{userProfile?.username}</p>
+                <p className="text-gray-400 text-xs sm:text-sm">@{userProfile?.username}</p>
               </div>
             </div>
             

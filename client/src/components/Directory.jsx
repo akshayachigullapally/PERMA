@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
+import api from '../utils/api';
 import {
   UserGroupIcon,
   MagnifyingGlassIcon,
@@ -19,113 +20,61 @@ const Directory = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('recent'); // recent, popular, most_clicks
   const [filteredProfiles, setFilteredProfiles] = useState([]);
+  const [error, setError] = useState(null);
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    totalPages: 1,
+    totalProfiles: 0,
+    hasNextPage: false,
+    hasPrevPage: false
+  });
+
+  const fetchPublicProfiles = async (page = 1, search = '', sort = 'recent') => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response = await api.directory.getProfiles({
+        page,
+        limit: 20,
+        search,
+        sort
+      });
+
+      if (response.success) {
+        setProfiles(response.profiles);
+        setFilteredProfiles(response.profiles);
+        setPagination(response.pagination);
+      } else {
+        throw new Error(response.error || 'Failed to fetch profiles');
+      }
+    } catch (error) {
+      console.error('Error fetching profiles:', error);
+      setError(error.message);
+      setProfiles([]);
+      setFilteredProfiles([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchPublicProfiles = async () => {
-      try {
-        // Since we don't have a public directory endpoint, let's create some mock data
-        // In a real implementation, you'd have an endpoint like /api/directory
-        setProfiles([
-          {
-            username: 'sarah_dev',
-            displayName: 'Sarah Johnson',
-            bio: 'Full-stack developer passionate about React and Node.js',
-            profileImage: null,
-            totalViews: 1250,
-            totalClicks: 892,
-            linkCount: 8,
-            createdAt: '2024-01-15',
-            isVerified: true
-          },
-          {
-            username: 'mike_designer',
-            displayName: 'Mike Chen',
-            bio: 'UI/UX Designer creating beautiful digital experiences',
-            profileImage: null,
-            totalViews: 2100,
-            totalClicks: 1456,
-            linkCount: 12,
-            createdAt: '2024-02-01',
-            isVerified: false
-          },
-          {
-            username: 'alex_creator',
-            displayName: 'Alex Rivera',
-            bio: 'Content creator, photographer, and digital nomad',
-            profileImage: null,
-            totalViews: 3200,
-            totalClicks: 2100,
-            linkCount: 15,
-            createdAt: '2024-01-20',
-            isVerified: true
-          },
-          {
-            username: 'lisa_startup',
-            displayName: 'Lisa Park',
-            bio: 'Startup founder & entrepreneur in the fintech space',
-            profileImage: null,
-            totalViews: 1800,
-            totalClicks: 1200,
-            linkCount: 10,
-            createdAt: '2024-02-10',
-            isVerified: true
-          },
-          {
-            username: 'dev_carlos',
-            displayName: 'Carlos Martinez',
-            bio: 'Software engineer at a Fortune 500 company',
-            profileImage: null,
-            totalViews: 950,
-            totalClicks: 675,
-            linkCount: 6,
-            createdAt: '2024-02-15',
-            isVerified: false
-          },
-          {
-            username: 'emily_writer',
-            displayName: 'Emily Thompson',
-            bio: 'Technical writer and blogger about web development',
-            profileImage: null,
-            totalViews: 1400,
-            totalClicks: 980,
-            linkCount: 9,
-            createdAt: '2024-01-25',
-            isVerified: false
-          }
-        ]);
-      } catch (error) {
-        console.error('Error fetching profiles:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPublicProfiles();
+    fetchPublicProfiles(1, '', 'recent');
   }, []);
 
+  // Handle search and sort changes with debouncing
   useEffect(() => {
-    let filtered = profiles.filter(profile =>
-      profile.displayName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      profile.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      profile.bio.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const delayedSearch = setTimeout(() => {
+      fetchPublicProfiles(1, searchTerm, sortBy);
+    }, 500);
 
-    // Sort profiles
-    switch (sortBy) {
-      case 'popular':
-        filtered.sort((a, b) => b.totalViews - a.totalViews);
-        break;
-      case 'most_clicks':
-        filtered.sort((a, b) => b.totalClicks - a.totalClicks);
-        break;
-      case 'recent':
-      default:
-        filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        break;
-    }
+    return () => clearTimeout(delayedSearch);
+  }, [searchTerm, sortBy]);
 
-    setFilteredProfiles(filtered);
-  }, [profiles, searchTerm, sortBy]);
+  useEffect(() => {
+    // This effect is now handled by the API call, so we can remove the local filtering
+    setFilteredProfiles(profiles);
+  }, [profiles]);
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -139,6 +88,24 @@ const Directory = () => {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <LoadingSpinner />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-red-400 text-xl mb-4">⚠️</div>
+          <h3 className="text-xl font-semibold text-gray-300 mb-2">Error loading directory</h3>
+          <p className="text-gray-400 mb-4">{error}</p>
+          <button
+            onClick={() => fetchPublicProfiles(1, searchTerm, sortBy)}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+          >
+            Try Again
+          </button>
+        </div>
       </div>
     );
   }
@@ -191,7 +158,7 @@ const Directory = () => {
               <UserGroupIcon className="h-5 w-5 sm:h-6 sm:w-6 text-blue-400" />
             </div>
             <div>
-              <p className="text-lg sm:text-2xl font-bold text-white">{profiles.length}</p>
+              <p className="text-lg sm:text-2xl font-bold text-white">{pagination.totalProfiles || profiles.length}</p>
               <p className="text-gray-400 text-xs sm:text-sm">Total Profiles</p>
             </div>
           </div>
@@ -202,7 +169,7 @@ const Directory = () => {
             </div>
             <div>
               <p className="text-lg sm:text-2xl font-bold text-white">
-                {profiles.reduce((sum, p) => sum + p.totalViews, 0).toLocaleString()}
+                {profiles.reduce((sum, p) => sum + (p.totalViews || 0), 0).toLocaleString()}
               </p>
               <p className="text-gray-400 text-xs sm:text-sm">Total Views</p>
             </div>
@@ -214,7 +181,7 @@ const Directory = () => {
             </div>
             <div>
               <p className="text-lg sm:text-2xl font-bold text-white">
-                {profiles.reduce((sum, p) => sum + p.linkCount, 0)}
+                {profiles.reduce((sum, p) => sum + (p.linkCount || 0), 0)}
               </p>
               <p className="text-gray-400 text-xs sm:text-sm">Total Links</p>
             </div>
@@ -266,13 +233,13 @@ const Directory = () => {
                   {/* Profile Info */}
                   <div className="mb-3 sm:mb-4">
                     <h3 className="text-base sm:text-lg font-semibold text-white mb-1 group-hover:text-blue-400 transition-colors truncate">
-                      {profile.displayName}
+                      {profile.displayName || profile.username}
                     </h3>
                     <p className="text-blue-400 text-xs sm:text-sm font-mono mb-2 truncate">
                       @{profile.username}
                     </p>
                     <p className="text-gray-400 text-xs sm:text-sm line-clamp-2">
-                      {profile.bio}
+                      {profile.bio || 'No bio available'}
                     </p>
                   </div>
 
@@ -283,7 +250,7 @@ const Directory = () => {
                         <EyeIcon className="h-3 w-3 sm:h-4 sm:w-4 text-gray-400 mr-1" />
                       </div>
                       <p className="text-white font-semibold text-xs sm:text-sm">
-                        {profile.totalViews.toLocaleString()}
+                        {(profile.totalViews || 0).toLocaleString()}
                       </p>
                       <p className="text-gray-400 text-xs">Views</p>
                     </div>
@@ -292,7 +259,7 @@ const Directory = () => {
                         <FireIcon className="h-3 w-3 sm:h-4 sm:w-4 text-gray-400 mr-1" />
                       </div>
                       <p className="text-white font-semibold text-xs sm:text-sm">
-                        {profile.totalClicks.toLocaleString()}
+                        {(profile.totalClicks || 0).toLocaleString()}
                       </p>
                       <p className="text-gray-400 text-xs">Clicks</p>
                     </div>
@@ -301,7 +268,7 @@ const Directory = () => {
                         <LinkIcon className="h-3 w-3 sm:h-4 sm:w-4 text-gray-400 mr-1" />
                       </div>
                       <p className="text-white font-semibold text-sm">
-                        {profile.linkCount}
+                        {profile.linkCount || 0}
                       </p>
                       <p className="text-gray-400 text-xs">Links</p>
                     </div>

@@ -212,6 +212,81 @@ router.put('/profile/password', authenticateToken, async (req, res) => {
   }
 });
 
+// Get directory of public profiles
+router.get('/directory', async (req, res) => {
+  try {
+    const { page = 1, limit = 20, sort = 'recent', search = '' } = req.query;
+    
+    // Build search filter
+    let searchFilter = { isPublic: true };
+    if (search) {
+      searchFilter.$or = [
+        { username: { $regex: search, $options: 'i' } },
+        { displayName: { $regex: search, $options: 'i' } },
+        { bio: { $regex: search, $options: 'i' } }
+      ];
+    }
+    
+    // Build sort options
+    let sortOptions = {};
+    switch (sort) {
+      case 'popular':
+        sortOptions = { 'analytics.totalViews': -1 };
+        break;
+      case 'most_clicks':
+        sortOptions = { 'analytics.totalClicks': -1 };
+        break;
+      case 'recent':
+      default:
+        sortOptions = { createdAt: -1 };
+        break;
+    }
+    
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+    
+    const users = await User.find(searchFilter)
+      .select('username displayName bio profileImage analytics createdAt links')
+      .sort(sortOptions)
+      .skip(skip)
+      .limit(parseInt(limit))
+      .lean();
+    
+    // Transform the data to include additional computed fields
+    const profiles = users.map(user => ({
+      username: user.username,
+      displayName: user.displayName || user.username,
+      bio: user.bio || '',
+      profileImage: user.profileImage,
+      totalViews: user.analytics?.totalViews || 0,
+      totalClicks: user.analytics?.totalClicks || 0,
+      linkCount: user.links?.length || 0,
+      createdAt: user.createdAt,
+      isVerified: false // You can implement verification logic later
+    }));
+    
+    // Get total count for pagination
+    const totalProfiles = await User.countDocuments(searchFilter);
+    
+    res.json({
+      success: true,
+      profiles,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages: Math.ceil(totalProfiles / parseInt(limit)),
+        totalProfiles,
+        hasNextPage: skip + profiles.length < totalProfiles,
+        hasPrevPage: parseInt(page) > 1
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching directory:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch directory'
+    });
+  }
+});
+
 // Get public user profile by username
 router.get('/public/:username', async (req, res) => {
   try {

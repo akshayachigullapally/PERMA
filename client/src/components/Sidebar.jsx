@@ -4,7 +4,6 @@ import {
   ChartBarIcon,
   QrCodeIcon,
   UserGroupIcon,
-  Cog6ToothIcon,
   TrophyIcon,
   DocumentIcon,
   BuildingOfficeIcon,
@@ -23,7 +22,6 @@ const Sidebar = ({ isOpen, onClose }) => {
     { name: 'Achievements', href: '/achievements', icon: TrophyIcon },
     { name: 'Resume Builder', href: '/resume', icon: DocumentIcon },
     { name: 'Enterprise', href: '/enterprise', icon: BuildingOfficeIcon },
-    { name: 'Settings', href: '/settings', icon: Cog6ToothIcon },
   ];
 
   const isActive = (href) => location.pathname === href;

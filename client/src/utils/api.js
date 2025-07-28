@@ -89,6 +89,25 @@ const api = {
         method: 'POST',
       });
     }
+  },
+
+  // Achievements API functions
+  achievements: {
+    async getAchievements() {
+      return api.request('/achievements');
+    },
+
+    async checkAchievements() {
+      return api.request('/achievements/check', {
+        method: 'POST',
+      });
+    },
+
+    async updateStreak() {
+      return api.request('/achievements/update-streak', {
+        method: 'POST',
+      });
+    }
   }
 };
 

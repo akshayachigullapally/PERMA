@@ -11,6 +11,7 @@ import userRoutes from './routes/users.js';
 import linkRoutes from './routes/links.js';
 import authRoutes from './routes/auth.js';
 import analyticsRoutes from './routes/analytics.js';
+import achievementsRoutes from './routes/achievements.js';
 
 dotenv.config();
 
@@ -97,6 +98,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/links', linkRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/achievements', achievementsRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {

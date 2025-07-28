@@ -4,6 +4,7 @@ import { useAuth } from './hooks/useAuth'
 import Homepage from './components/Homepage'
 import ComprehensiveDashboard from './components/ComprehensiveDashboard'
 import AnalyticsPage from './components/AnalyticsPage'
+import Achievements from './components/Achievements'
 import QRCodes from './components/QRCodes'
 import Directory from './components/Directory'
 import ComprehensiveProfileSettings from './components/ComprehensiveProfileSettings'
@@ -55,6 +56,10 @@ function App() {
           <Route 
             path="/analytics" 
             element={isSignedIn ? <AnalyticsPage /> : <Navigate to="/sign-in" replace />} 
+          />
+          <Route 
+            path="/achievements" 
+            element={isSignedIn ? <Achievements /> : <Navigate to="/sign-in" replace />} 
           />
           <Route 
             path="/qr-codes" 

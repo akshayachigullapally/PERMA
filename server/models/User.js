@@ -43,6 +43,21 @@ const linkSchema = new mongoose.Schema({
   timestamps: true
 });
 
+const achievementSchema = new mongoose.Schema({
+  achievementId: {
+    type: String,
+    required: true
+  },
+  earnedAt: {
+    type: Date,
+    default: Date.now
+  },
+  progress: {
+    type: Number,
+    default: 0
+  }
+});
+
 const userSchema = new mongoose.Schema({
   email: {
     type: String,
@@ -102,6 +117,19 @@ const userSchema = new mongoose.Schema({
       type: Number,
       default: 0
     }
+  },
+  achievements: [achievementSchema],
+  achievementPoints: {
+    type: Number,
+    default: 0
+  },
+  streakDays: {
+    type: Number,
+    default: 0
+  },
+  lastActiveDate: {
+    type: Date,
+    default: Date.now
   },
   subscription: {
     type: {

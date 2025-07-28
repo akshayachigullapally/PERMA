@@ -268,7 +268,7 @@ const ComprehensiveProfileSettings = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 p-4 sm:p-6">
+    <div className="min-h-screen bg-gray-900 p-4 sm:p-6">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-6 sm:mb-8">
@@ -281,21 +281,24 @@ const ComprehensiveProfileSettings = () => {
           {[
             { id: 'profile', label: 'Profile', icon: UserIcon },
             { id: 'security', label: 'Security', icon: LockClosedIcon }
-          ].map(({ id, label, icon: IconComponent }) => (
-            <button
-              key={id}
-              onClick={() => setActiveTab(id)}
-              className={`flex items-center space-x-2 px-3 sm:px-4 py-2 rounded-lg font-medium transition-all text-sm sm:text-base ${
-                activeTab === id
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-white/10 text-gray-300 hover:bg-white/20'
-              }`}
-            >
-              <IconComponent className="w-4 h-4" />
-              <span className="hidden sm:inline">{label}</span>
-              <span className="sm:hidden">{label.charAt(0)}</span>
-            </button>
-          ))}
+          ].map(({ id, label, icon }) => {
+            const IconComponent = icon;
+            return (
+              <button
+                key={id}
+                onClick={() => setActiveTab(id)}
+                className={`flex items-center space-x-2 px-3 sm:px-4 py-2 rounded-lg font-medium transition-all text-sm sm:text-base ${
+                  activeTab === id
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-white/10 text-gray-300 hover:bg-white/20'
+                }`}
+              >
+                <IconComponent className="w-4 h-4" />
+                <span className="hidden sm:inline">{label}</span>
+                <span className="sm:hidden">{label.charAt(0)}</span>
+              </button>
+            );
+          })}
         </div>
 
         {/* Profile Tab */}
@@ -328,7 +331,7 @@ const ComprehensiveProfileSettings = () => {
                     <button
                       onClick={() => fileInputRef.current?.click()}
                       disabled={uploadingImage}
-                      className="flex items-center space-x-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors disabled:opacity-50"
+                      className="flex items-center ms-5 space-x-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors disabled:opacity-50"
                     >
                       <CameraIcon className="w-4 h-4" />
                       <span>Upload Photo</span>
@@ -343,7 +346,7 @@ const ComprehensiveProfileSettings = () => {
                       </button>
                     )}
                   </div>
-                  <p className="text-gray-400 text-sm">
+                  <p className="text-gray-400 text-sm ms-3">
                     Upload a photo to personalize your profile. Max size: 5MB
                   </p>
                 </div>

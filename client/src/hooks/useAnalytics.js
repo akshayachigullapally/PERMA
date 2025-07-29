@@ -51,12 +51,14 @@ export const useAnalytics = () => {
       if (response.ok) {
         const data = await response.json();
         setUserStats(data.analytics);
+        return data.analytics; // Return the data for immediate use
       } else {
         throw new Error('Failed to fetch user stats');
       }
     } catch (err) {
       console.error('Error fetching user stats:', err);
       setError(err.message);
+      return null;
     } finally {
       setLoading(false);
     }

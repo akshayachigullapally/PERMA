@@ -29,7 +29,8 @@ import {
   CursorArrowRaysIcon,
   TrashIcon,
   PencilIcon,
-  EyeSlashIcon
+  EyeSlashIcon,
+  ArrowPathIcon
 } from '@heroicons/react/24/outline';
 import { toast } from 'react-hot-toast';
 import SortableLink from './SortableLink';
@@ -39,7 +40,7 @@ import QRCodeGenerator from './QRCodeGenerator';
 
 const ComprehensiveDashboard = () => {
   const { user: authUser, getToken: authGetToken, loading: authLoading } = useAuth();
-  const { userStats, fetchUserStats } = useAnalytics();
+  const { userStats, fetchUserStats, loading: analyticsLoading } = useAnalytics();
   
   const [links, setLinks] = useState([]);
   const [userProfile, setUserProfile] = useState(null);
@@ -49,6 +50,7 @@ const ComprehensiveDashboard = () => {
   const [showQRModal, setShowQRModal] = useState(false);
   const [selectedLinkForQR, setSelectedLinkForQR] = useState(null);
   const [error, setError] = useState(null);
+  const [lastUpdated, setLastUpdated] = useState(new Date());
 
   // Memoize getToken to prevent unnecessary re-renders
   const getToken = useCallback(() => {
@@ -308,6 +310,9 @@ const ComprehensiveDashboard = () => {
         ));
         setEditingLink(null);
         toast.success('Link updated successfully');
+        
+        // Refresh analytics to get updated stats
+        refreshAnalytics();
       } else {
         throw new Error('Failed to update link');
       }
@@ -333,6 +338,9 @@ const ComprehensiveDashboard = () => {
       if (response.ok) {
         setLinks(prev => prev.filter(link => link._id !== linkId));
         toast.success('Link deleted successfully');
+        
+        // Refresh analytics to get updated stats
+        refreshAnalytics();
       } else {
         throw new Error('Failed to delete link');
       }
@@ -361,6 +369,9 @@ const ComprehensiveDashboard = () => {
           link._id === linkId ? data.link : link
         ));
         toast.success(`Link ${!isActive ? 'shown' : 'hidden'} successfully`);
+        
+        // Refresh analytics to get updated stats
+        refreshAnalytics();
       } else {
         throw new Error('Failed to toggle link visibility');
       }
@@ -496,12 +507,20 @@ const ComprehensiveDashboard = () => {
                 <div className="p-1.5 sm:p-2 bg-blue-500/20 rounded-lg">
                   <EyeIcon className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
                 </div>
-                <div>
+                <div className="flex-1">
                   <p className="text-gray-400 text-xs sm:text-sm">Profile Views</p>
                   <p className="text-lg sm:text-xl font-bold text-white">
                     {userStats?.totalViews?.toLocaleString() || '0'}
                   </p>
                 </div>
+                <button
+                  onClick={refreshAnalytics}
+                  className="p-1 text-gray-400 hover:text-white transition-colors"
+                  title="Refresh analytics"
+                  disabled={analyticsLoading}
+                >
+                  <ArrowPathIcon className={`w-3 h-3 ${analyticsLoading ? 'animate-spin' : ''}`} />
+                </button>
               </div>
             </div>
             

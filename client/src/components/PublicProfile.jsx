@@ -11,7 +11,7 @@ const PublicProfile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/users/public/${username}`);
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/users/public/${username}`);
         
         if (response.ok) {
           const data = await response.json();
@@ -34,13 +34,19 @@ const PublicProfile = () => {
 
   const handleLinkClick = async (linkId) => {
     try {
-      await fetch(`http://localhost:5000/api/links/${linkId}/click`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/links/${linkId}/click`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ username })
       });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      console.log('Click tracked successfully for link:', linkId);
     } catch (error) {
       console.error('Error tracking click:', error);
     }

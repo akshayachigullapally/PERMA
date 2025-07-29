@@ -151,45 +151,51 @@ const Directory = () => {
           </div>
         </div>
 
-        {/* Stats Bar */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8">
-          <div className="bg-gray-800 rounded-lg p-3 sm:p-4 flex items-center">
-            <div className="p-2 bg-blue-500/20 rounded-lg mr-2 sm:mr-3">
-              <UserGroupIcon className="h-5 w-5 sm:h-6 sm:w-6 text-blue-400" />
+        {/* Stats Bar - Only show when there are profiles */}
+        {filteredProfiles && filteredProfiles.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8">
+            <div className="bg-gray-800 rounded-lg p-3 sm:p-4 flex items-center">
+              <div className="p-2 bg-blue-500/20 rounded-lg mr-2 sm:mr-3">
+                <UserGroupIcon className="h-5 w-5 sm:h-6 sm:w-6 text-blue-400" />
+              </div>
+              <div>
+                <p className="text-lg sm:text-2xl font-bold text-white">{pagination.totalProfiles || filteredProfiles.length}</p>
+                <p className="text-gray-400 text-xs sm:text-sm">Total Profiles</p>
+              </div>
             </div>
-            <div>
-              <p className="text-lg sm:text-2xl font-bold text-white">{pagination.totalProfiles || profiles.length}</p>
-              <p className="text-gray-400 text-xs sm:text-sm">Total Profiles</p>
-            </div>
-          </div>
 
-          <div className="bg-gray-800 rounded-lg p-3 sm:p-4 flex items-center">
-            <div className="p-2 bg-green-500/20 rounded-lg mr-2 sm:mr-3">
-              <EyeIcon className="h-5 w-5 sm:h-6 sm:w-6 text-green-400" />
+            <div className="bg-gray-800 rounded-lg p-3 sm:p-4 flex items-center">
+              <div className="p-2 bg-green-500/20 rounded-lg mr-2 sm:mr-3">
+                <EyeIcon className="h-5 w-5 sm:h-6 sm:w-6 text-green-400" />
+              </div>
+              <div>
+                <p className="text-lg sm:text-2xl font-bold text-white">
+                  {filteredProfiles.reduce((sum, p) => sum + (p.totalViews || 0), 0).toLocaleString()}
+                </p>
+                <p className="text-gray-400 text-xs sm:text-sm">Total Views</p>
+              </div>
             </div>
-            <div>
-              <p className="text-lg sm:text-2xl font-bold text-white">
-                {profiles.reduce((sum, p) => sum + (p.totalViews || 0), 0).toLocaleString()}
-              </p>
-              <p className="text-gray-400 text-xs sm:text-sm">Total Views</p>
-            </div>
-          </div>
 
-          <div className="bg-gray-800 rounded-lg p-3 sm:p-4 flex items-center">
-            <div className="p-2 bg-purple-500/20 rounded-lg mr-2 sm:mr-3">
-              <LinkIcon className="h-5 w-5 sm:h-6 sm:w-6 text-purple-400" />
-            </div>
-            <div>
-              <p className="text-lg sm:text-2xl font-bold text-white">
-                {profiles.reduce((sum, p) => sum + (p.linkCount || 0), 0)}
-              </p>
-              <p className="text-gray-400 text-xs sm:text-sm">Total Links</p>
+            <div className="bg-gray-800 rounded-lg p-3 sm:p-4 flex items-center">
+              <div className="p-2 bg-purple-500/20 rounded-lg mr-2 sm:mr-3">
+                <LinkIcon className="h-5 w-5 sm:h-6 sm:w-6 text-purple-400" />
+              </div>
+              <div>
+                <p className="text-lg sm:text-2xl font-bold text-white">
+                  {filteredProfiles.reduce((sum, p) => sum + (p.linkCount || 0), 0)}
+                </p>
+                <p className="text-gray-400 text-xs sm:text-sm">Total Links</p>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Profiles Grid */}
-        {filteredProfiles.length > 0 ? (
+        {loading ? (
+          <div className="text-center py-12">
+            <LoadingSpinner />
+          </div>
+        ) : filteredProfiles && filteredProfiles.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {filteredProfiles.map((profile) => (
               <Link
@@ -278,12 +284,25 @@ const Directory = () => {
             ))}
           </div>
         ) : (
-          <div className="text-center py-12">
-            <UserGroupIcon className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-300 mb-2">No profiles found</h3>
-            <p className="text-gray-400">
-              {searchTerm ? 'Try adjusting your search terms' : 'Be the first to create a public profile!'}
+          <div className="text-center py-16">
+            <UserGroupIcon className="h-20 w-20 text-gray-400 mx-auto mb-6" />
+            <h3 className="text-2xl font-semibold text-gray-300 mb-4">
+              {searchTerm ? 'No profiles found' : 'No public profiles yet'}
+            </h3>
+            <p className="text-gray-400 text-lg mb-8">
+              {searchTerm 
+                ? 'Try adjusting your search terms or explore different categories'
+                : 'Be the first to create a public profile and join our community!'
+              }
             </p>
+            {!searchTerm && user && (
+              <Link
+                to="/settings"
+                className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+              >
+                Make Your Profile Public
+              </Link>
+            )}
           </div>
         )}
 

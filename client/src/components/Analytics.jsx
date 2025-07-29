@@ -278,22 +278,45 @@ const Analytics = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="p-4 bg-white/5 rounded-lg">
-              <h4 className="font-semibold text-white mb-2">🎯 Optimize Your Profile</h4>
+              <h4 className="font-semibold text-white mb-2">🎯 Profile Optimization</h4>
               <p className="text-gray-300 text-sm">
-                {userStats?.totalViews > 100 
-                  ? "Great job! Your profile is getting good visibility. Consider adding more links to increase engagement."
-                  : "Boost your profile views by sharing your Perma link on social media and adding it to your email signature."
-                }
+                {(() => {
+                  const hasPhoto = user?.profileImage;
+                  const hasBio = user?.bio && user.bio.trim().length > 0;
+                  const hasLinks = userStats?.totalLinks > 0;
+                  
+                  if (hasPhoto && hasBio && hasLinks) {
+                    return userStats?.totalViews > 100 
+                      ? "Perfect! Your profile is complete and getting great visibility. Keep engaging with your audience!"
+                      : "Your profile is complete! Share your Perma link on social media to increase visibility.";
+                  } else {
+                    const missing = [];
+                    if (!hasPhoto) missing.push("profile photo");
+                    if (!hasBio) missing.push("bio");
+                    if (!hasLinks) missing.push("links");
+                    
+                    return `Complete your profile by adding ${missing.join(", ")} to improve engagement and visibility.`;
+                  }
+                })()}
               </p>
             </div>
 
             <div className="p-4 bg-white/5 rounded-lg">
-              <h4 className="font-semibold text-white mb-2">🔗 Link Performance</h4>
+              <h4 className="font-semibold text-white mb-2">🔗 Performance Insights</h4>
               <p className="text-gray-300 text-sm">
-                {userStats?.clickThroughRate > 10 
-                  ? "Excellent click-through rate! Your links are highly engaging."
-                  : "Try reordering your most important links to the top and adding compelling descriptions."
-                }
+                {(() => {
+                  if (userStats?.totalLinks === 0) {
+                    return "Add your first link to start tracking performance and engagement metrics.";
+                  } else if (userStats?.totalViews === 0) {
+                    return "Share your Perma link to start getting views and track your link performance.";
+                  } else if (userStats?.clickThroughRate > 10) {
+                    return "Excellent click-through rate! Your links are highly engaging with your audience.";
+                  } else if (userStats?.clickThroughRate > 5) {
+                    return "Good engagement rate. Try adding compelling descriptions to increase click-through rates.";
+                  } else {
+                    return "Consider reordering your most important links to the top and optimizing your descriptions.";
+                  }
+                })()}
               </p>
             </div>
           </div>

@@ -98,10 +98,11 @@ const ComprehensiveDashboard = () => {
       if (!token) return;
       
       await fetchUserStats(token);
+      setLastUpdated(new Date());
     } catch (err) {
       console.error('Error refreshing analytics:', err);
     }
-  }, [getToken, fetchUserStats]);
+  }, [getToken, fetchUserStats, setLastUpdated]);
 
   // Load data on component mount
   useEffect(() => {
@@ -265,28 +266,41 @@ const ComprehensiveDashboard = () => {
   // Add new link
   const handleAddLink = async (linkData) => {
     try {
-      // Create a new link with a unique ID and default values
-      const newLink = {
-        ...linkData,
-        id: Date.now().toString(),
-        clicks: 0,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        isVisible: true
-      };
+      const token = getToken();
+      if (!token) {
+        toast.error('Authentication required');
+        return;
+      }
 
-      // Add the link to local state
-      setLinks(prev => [...prev, newLink]);
-      setIsAddModalOpen(false);
-      toast.success('Link added successfully');
-      
-      // Refresh analytics to get updated stats
-      refreshAnalytics();
-      
-      console.log('New link added:', newLink); // Debug log
+      // Send the link data to the server to save in MongoDB
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/links`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(linkData)
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        
+        // Add the new link (with server-generated ID) to local state
+        setLinks(prev => [...prev, data.link]);
+        setIsAddModalOpen(false);
+        toast.success('Link added successfully');
+        
+        // Refresh analytics to get updated stats
+        refreshAnalytics();
+        
+        console.log('New link added to database:', data.link); // Debug log
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to add link');
+      }
     } catch (err) {
       console.error('Error adding link:', err);
-      toast.error('Failed to add link');
+      toast.error(err.message || 'Failed to add link');
     }
   };
 

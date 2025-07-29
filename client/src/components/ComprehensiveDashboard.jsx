@@ -39,7 +39,7 @@ import QRCodeGenerator from './QRCodeGenerator';
 
 const ComprehensiveDashboard = () => {
   const { user: authUser, getToken: authGetToken, loading: authLoading } = useAuth();
-  const { userStats } = useAnalytics();
+  const { userStats, fetchUserStats } = useAnalytics();
   
   const [links, setLinks] = useState([]);
   const [userProfile, setUserProfile] = useState(null);
@@ -88,6 +88,18 @@ const ComprehensiveDashboard = () => {
       setError('Failed to load links');
     }
   }, [getToken]);
+
+  // Reusable function to refresh analytics data
+  const refreshAnalytics = useCallback(async () => {
+    try {
+      const token = getToken();
+      if (!token) return;
+      
+      await fetchUserStats(token);
+    } catch (err) {
+      console.error('Error refreshing analytics:', err);
+    }
+  }, [getToken, fetchUserStats]);
 
   // Load data on component mount
   useEffect(() => {
@@ -190,6 +202,25 @@ const ComprehensiveDashboard = () => {
     loadData();
   }, [authUser, authLoading, getToken]);
 
+  // Refresh analytics data periodically to catch click updates
+  useEffect(() => {
+    if (!authUser || authLoading) return;
+
+    // Initial analytics fetch
+    refreshAnalytics();
+
+    // Set up interval to refresh analytics every 30 seconds
+    const analyticsInterval = setInterval(refreshAnalytics, 30000);
+
+    // Also refresh links periodically to get updated click counts
+    const linksInterval = setInterval(refreshLinks, 30000);
+
+    return () => {
+      clearInterval(analyticsInterval);
+      clearInterval(linksInterval);
+    };
+  }, [authUser, authLoading, refreshAnalytics, refreshLinks]);
+
   // Handle drag end
   const handleDragEnd = async (event) => {
     const { active, over } = event;
@@ -246,6 +277,9 @@ const ComprehensiveDashboard = () => {
       setLinks(prev => [...prev, newLink]);
       setIsAddModalOpen(false);
       toast.success('Link added successfully');
+      
+      // Refresh analytics to get updated stats
+      refreshAnalytics();
       
       console.log('New link added:', newLink); // Debug log
     } catch (err) {

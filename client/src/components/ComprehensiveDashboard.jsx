@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';
 import { useAnalytics } from '../hooks/useAnalytics';
 import {
@@ -50,7 +51,79 @@ const ComprehensiveDashboard = () => {
   const [showQRModal, setShowQRModal] = useState(false);
   const [selectedLinkForQR, setSelectedLinkForQR] = useState(null);
   const [error, setError] = useState(null);
-  const [lastUpdated, setLastUpdated] = useState(new Date());
+
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        duration: 0.6,
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.5,
+        ease: "easeOut"
+      }
+    }
+  };
+
+  const statsVariants = {
+    hidden: { scale: 0.9, opacity: 0 },
+    visible: {
+      scale: 1,
+      opacity: 1,
+      transition: {
+        duration: 0.4,
+        ease: "easeOut"
+      }
+    },
+    hover: {
+      scale: 1.02,
+      transition: {
+        duration: 0.2
+      }
+    }
+  };
+
+  const linkVariants = {
+    hidden: { x: -20, opacity: 0 },
+    visible: {
+      x: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.4,
+        ease: "easeOut"
+      }
+    },
+    exit: {
+      x: 20,
+      opacity: 0,
+      transition: {
+        duration: 0.3
+      }
+    }
+  };
+
+  const buttonVariants = {
+    hover: {
+      scale: 1.05,
+      transition: {
+        duration: 0.2
+      }
+    },
+    tap: {
+      scale: 0.95
+    }
+  };
 
   // Memoize getToken to prevent unnecessary re-renders
   const getToken = useCallback(() => {
@@ -98,11 +171,10 @@ const ComprehensiveDashboard = () => {
       if (!token) return;
       
       await fetchUserStats(token);
-      setLastUpdated(new Date());
     } catch (err) {
       console.error('Error refreshing analytics:', err);
     }
-  }, [getToken, fetchUserStats, setLastUpdated]);
+  }, [getToken, fetchUserStats]);
 
   // Load data on component mount
   useEffect(() => {
@@ -470,10 +542,18 @@ const ComprehensiveDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900">
+    <motion.div 
+      className="min-h-screen bg-gray-900"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
         {/* Header Section */}
-        <div className="mb-6 sm:mb-8">
+        <motion.div 
+          className="mb-6 sm:mb-8"
+          variants={itemVariants}
+        >
           <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 space-y-4 sm:space-y-0">
             <div className="flex items-center space-x-3 sm:space-x-4">
               <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-white/10 border border-white/20 flex items-center justify-center overflow-hidden">
@@ -515,8 +595,15 @@ const ComprehensiveDashboard = () => {
           </div>
 
           {/* Quick Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
-            <div className="bg-white/10 backdrop-blur-md rounded-xl p-3 sm:p-4 border border-white/20">
+          <motion.div 
+            className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8"
+            variants={itemVariants}
+          >
+            <motion.div 
+              className="bg-white/10 backdrop-blur-md rounded-xl p-3 sm:p-4 border border-white/20"
+              variants={statsVariants}
+              whileHover="hover"
+            >
               <div className="flex items-center space-x-2 sm:space-x-3">
                 <div className="p-1.5 sm:p-2 bg-blue-500/20 rounded-lg">
                   <EyeIcon className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
@@ -527,18 +614,26 @@ const ComprehensiveDashboard = () => {
                     {userStats?.totalViews?.toLocaleString() || '0'}
                   </p>
                 </div>
-                <button
+                <motion.button
                   onClick={refreshAnalytics}
                   className="p-1 text-gray-400 hover:text-white transition-colors"
                   title="Refresh analytics"
                   disabled={analyticsLoading}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  animate={analyticsLoading ? { rotate: 360 } : { rotate: 0 }}
+                  transition={{ duration: analyticsLoading ? 1 : 0.2, repeat: analyticsLoading ? Infinity : 0 }}
                 >
                   <ArrowPathIcon className={`w-3 h-3 ${analyticsLoading ? 'animate-spin' : ''}`} />
-                </button>
+                </motion.button>
               </div>
-            </div>
+            </motion.div>
             
-            <div className="bg-white/10 backdrop-blur-md rounded-xl p-3 sm:p-4 border border-white/20">
+            <motion.div 
+              className="bg-white/10 backdrop-blur-md rounded-xl p-3 sm:p-4 border border-white/20"
+              variants={statsVariants}
+              whileHover="hover"
+            >
               <div className="flex items-center space-x-2 sm:space-x-3">
                 <div className="p-1.5 sm:p-2 bg-green-500/20 rounded-lg">
                   <CursorArrowRaysIcon className="w-4 h-4 sm:w-5 sm:h-5 text-green-400" />
@@ -550,9 +645,13 @@ const ComprehensiveDashboard = () => {
                   </p>
                 </div>
               </div>
-            </div>
+            </motion.div>
             
-            <div className="bg-white/10 backdrop-blur-md rounded-xl p-3 sm:p-4 border border-white/20">
+            <motion.div 
+              className="bg-white/10 backdrop-blur-md rounded-xl p-3 sm:p-4 border border-white/20"
+              variants={statsVariants}
+              whileHover="hover"
+            >
               <div className="flex items-center space-x-2 sm:space-x-3">
                 <div className="p-1.5 sm:p-2 bg-purple-500/20 rounded-lg">
                   <LinkIcon className="w-4 h-4 sm:w-5 sm:h-5 text-purple-400" />
@@ -564,9 +663,13 @@ const ComprehensiveDashboard = () => {
                   </p>
                 </div>
               </div>
-            </div>
+            </motion.div>
             
-            <div className="bg-white/10 backdrop-blur-md rounded-xl p-3 sm:p-4 border border-white/20">
+            <motion.div 
+              className="bg-white/10 backdrop-blur-md rounded-xl p-3 sm:p-4 border border-white/20"
+              variants={statsVariants}
+              whileHover="hover"
+            >
               <div className="flex items-center space-x-2 sm:space-x-3">
                 <div className="p-1.5 sm:p-2 bg-yellow-500/20 rounded-lg">
                   <ChartBarIcon className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400" />
@@ -578,21 +681,27 @@ const ComprehensiveDashboard = () => {
                   </p>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
+            </motion.div>
+          </motion.div>
+        </motion.div>
 
         {/* Links Section */}
-        <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-6 border border-white/20">
+        <motion.div 
+          className="bg-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-6 border border-white/20"
+          variants={itemVariants}
+        >
           <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 space-y-3 sm:space-y-0">
             <h2 className="text-lg sm:text-xl font-bold text-white">Your Links</h2>
-            <button
+            <motion.button
               onClick={() => setIsAddModalOpen(true)}
               className="flex items-center justify-center space-x-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors text-sm w-full sm:w-auto"
+              variants={buttonVariants}
+              whileHover="hover"
+              whileTap="tap"
             >
               <PlusIcon className="w-4 h-4" />
               <span>Add Link</span>
-            </button>
+            </motion.button>
           </div>
 
           {links.length > 0 ? (
@@ -602,40 +711,67 @@ const ComprehensiveDashboard = () => {
               onDragEnd={handleDragEnd}
             >
               <SortableContext items={links.map(link => link._id)} strategy={verticalListSortingStrategy}>
-                <div className="space-y-3">
-                  {links.map((link) => (
-                    <SortableLink
-                      key={link._id}
-                      link={link}
-                      onEdit={(linkData) => handleEditLink(link._id, linkData)}
-                      onDelete={() => handleDeleteLink(link._id)}
-                      onToggleVisibility={() => handleToggleVisibility(link._id, link.isActive)}
-                      onCopy={() => handleCopyLink(link.url)}
-                      onGenerateQR={() => handleGenerateQR(link)}
-                    />
-                  ))}
-                </div>
+                <motion.div 
+                  className="space-y-3"
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  <AnimatePresence mode="popLayout">
+                    {links.map((link, index) => (
+                      <motion.div
+                        key={link._id}
+                        variants={linkVariants}
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                        layout
+                        transition={{ delay: index * 0.1 }}
+                      >
+                        <SortableLink
+                          link={link}
+                          onEdit={(linkData) => handleEditLink(link._id, linkData)}
+                          onDelete={() => handleDeleteLink(link._id)}
+                          onToggleVisibility={() => handleToggleVisibility(link._id, link.isActive)}
+                          onCopy={() => handleCopyLink(link.url)}
+                          onGenerateQR={() => handleGenerateQR(link)}
+                        />
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </motion.div>
               </SortableContext>
             </DndContext>
           ) : (
-            <div className="text-center py-8 sm:py-12">
+            <motion.div 
+              className="text-center py-8 sm:py-12"
+              variants={itemVariants}
+              initial="hidden"
+              animate="visible"
+            >
               <div className="w-12 h-12 sm:w-16 sm:h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
                 <LinkIcon className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400" />
               </div>
               <h3 className="text-base sm:text-lg font-medium text-white mb-2">No links yet</h3>
               <p className="text-gray-400 mb-4 sm:mb-6 text-sm sm:text-base">Start building your link collection</p>
-              <button
+              <motion.button
                 onClick={() => setIsAddModalOpen(true)}
                 className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors w-full sm:w-auto"
+                variants={buttonVariants}
+                whileHover="hover"
+                whileTap="tap"
               >
                 Add Your First Link
-              </button>
-            </div>
+              </motion.button>
+            </motion.div>
           )}
-        </div>
+        </motion.div>
 
         {/* Profile Preview */}
-        <div className="mt-6 sm:mt-8 bg-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-6 border border-white/20">
+        <motion.div 
+          className="mt-6 sm:mt-8 bg-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-6 border border-white/20"
+          variants={itemVariants}
+        >
           <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 space-y-2 sm:space-y-0">
             <h3 className="text-base sm:text-lg font-bold text-white">Profile Preview</h3>
             <div className="flex items-center space-x-2">
@@ -693,7 +829,7 @@ const ComprehensiveDashboard = () => {
               )}
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
 
       {/* Modals */}
@@ -715,7 +851,7 @@ const ComprehensiveDashboard = () => {
           link={selectedLinkForQR}
         />
       )}
-    </div>
+    </motion.div>
   );
 };
 

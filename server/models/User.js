@@ -63,36 +63,44 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-    trim: true,
     lowercase: true
   },
   password: {
     type: String,
-    required: true
+    required: function() {
+      return !this.googleId; // Password not required for Google users
+    }
   },
   username: {
     type: String,
     required: true,
     unique: true,
-    trim: true,
     lowercase: true
   },
   displayName: {
     type: String,
-    trim: true
+    required: true
   },
   bio: {
     type: String,
-    trim: true,
-    maxLength: 500
+    default: ''
   },
   profileImage: {
     type: String,
-    trim: true
+    default: ''
+  },
+  googleId: {
+    type: String,
+    unique: true,
+    sparse: true
+  },
+  isEmailVerified: {
+    type: Boolean,
+    default: false
   },
   theme: {
     type: String,
-    enum: ['dark', 'light', 'auto'],
+    enum: ['light', 'dark', 'auto'],
     default: 'dark'
   },
   isPublic: {

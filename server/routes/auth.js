@@ -2,6 +2,7 @@ import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { User } from '../models/User.js';
+import admin from 'firebase-admin';
 
 const router = express.Router();
 
@@ -149,6 +150,142 @@ router.get('/verify', authenticateToken, async (req, res) => {
   } catch (error) {
     console.error('Token verification error:', error);
     res.status(500).json({ message: 'Server error during token verification' });
+  }
+});
+
+// Google OAuth
+router.post('/google', async (req, res) => {
+  try {
+    const { idToken, displayName, email, photoURL } = req.body;
+
+    // Verify the ID token with Firebase Admin
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    const { uid, email: firebaseEmail } = decodedToken;
+
+    // Check if user already exists
+    let user = await User.findOne({ 
+      $or: [
+        { email: firebaseEmail },
+        { googleId: uid }
+      ]
+    });
+
+    if (user) {
+      // Update user's Google ID if not set
+      if (!user.googleId) {
+        user.googleId = uid;
+        await user.save();
+      }
+    } else {
+      // Create a new user
+      const username = firebaseEmail.split('@')[0] + '_' + Date.now();
+      
+      user = new User({
+        email: firebaseEmail,
+        googleId: uid,
+        username,
+        displayName: displayName || username,
+        profileImage: photoURL,
+        isEmailVerified: true // Google accounts are pre-verified
+      });
+
+      await user.save();
+    }
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { userId: user._id, email: user.email, username: user.username },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    // Return user data (without password)
+    const { password: _, ...userWithoutPassword } = user.toObject();
+    
+    res.json({
+      message: 'Google sign in successful',
+      token,
+      user: userWithoutPassword
+    });
+  } catch (error) {
+    console.error('Google auth error:', error);
+    res.status(500).json({ message: 'Google authentication failed' });
+  }
+});
+
+// Firebase Login/Register (handles both new and existing users)
+router.post('/firebase-login', async (req, res) => {
+  try {
+    const authHeader = req.headers['authorization'];
+    const idToken = authHeader && authHeader.split(' ')[1];
+
+    if (!idToken) {
+      return res.status(401).json({ message: 'Firebase ID token required' });
+    }
+
+    // Verify the ID token with Firebase Admin
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    const { uid, email: firebaseEmail, name, picture } = decodedToken;
+
+    console.log('Firebase token verified for:', firebaseEmail);
+
+    // Check if user already exists
+    let user = await User.findOne({ 
+      $or: [
+        { email: firebaseEmail },
+        { googleId: uid }
+      ]
+    });
+
+    if (user) {
+      // Update user's Google ID if not set
+      if (!user.googleId) {
+        user.googleId = uid;
+        await user.save();
+      }
+    } else {
+      // Create a new user
+      const baseUsername = firebaseEmail.split('@')[0];
+      let username = baseUsername;
+      
+      // Ensure username is unique
+      let counter = 1;
+      while (await User.findOne({ username })) {
+        username = `${baseUsername}_${counter}`;
+        counter++;
+      }
+      
+      user = new User({
+        email: firebaseEmail,
+        googleId: uid,
+        username,
+        displayName: name || username,
+        profileImage: picture,
+        isEmailVerified: true // Firebase accounts are pre-verified
+      });
+
+      await user.save();
+      console.log('New user created from Firebase auth:', username);
+    }
+
+    // Generate JWT token for our backend
+    const token = jwt.sign(
+      { userId: user._id, email: user.email, username: user.username },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    // Return user data (without password)
+    const { password: _, ...userWithoutPassword } = user.toObject();
+    
+    res.json({
+      message: 'Firebase authentication successful',
+      token,
+      user: userWithoutPassword
+    });
+  } catch (error) {
+    console.error('Firebase login error:', error);
+    res.status(500).json({ message: 'Firebase authentication failed' });
   }
 });
 

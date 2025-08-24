@@ -5,6 +5,7 @@ import { useAnalytics } from '../hooks/useAnalytics';
 import { Link2, ArrowRight } from 'lucide-react';
 import HeroSection from './HeroSection';
 import FeaturesSection from './FeaturesSection';
+import DebugInfo from './DebugInfo';
 
 const Homepage = () => {
   const { isSignedIn } = useAuth();
@@ -116,6 +117,9 @@ const Homepage = () => {
           </div>
         </div>
       </footer>
+
+      {/* Add this temporarily for debugging */}
+      {import.meta.env.DEV && <DebugInfo />}
     </div>
   );
 };

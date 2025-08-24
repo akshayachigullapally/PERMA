@@ -7,30 +7,33 @@ export const useAnalytics = () => {
   const [error, setError] = useState(null);
 
   const fetchPlatformStats = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    
     try {
-      setLoading(true);
-      setError(null);
-      
       const response = await fetch(`${import.meta.env.VITE_API_URL}/analytics/platform-stats`);
       
       if (response.ok) {
         const data = await response.json();
         setPlatformStats(data.stats);
       } else {
-        throw new Error('Failed to fetch platform stats');
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
     } catch (err) {
       console.error('Error fetching platform stats:', err);
-      setError(err.message);
-      // Set fallback data if API fails
+      
+      // Check if it's a connection error
+      if (err.message.includes('Failed to fetch') || err.message.includes('ERR_CONNECTION_REFUSED')) {
+        setError('Cannot connect to server. Please ensure the backend is running on http://localhost:5000');
+      } else {
+        setError('Failed to load platform statistics');
+      }
+      
+      // Set default stats for demo purposes
       setPlatformStats({
-        totalUsers: 250,
         avgLinksPerUser: 5,
         monthlyGrowth: 15,
-        proConversionRate: 3,
-        clickThroughRate: 12,
-        totalClicks: 5000,
-        totalViews: 8000
+        proConversionRate: 3
       });
     } finally {
       setLoading(false);

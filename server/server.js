@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import multer from 'multer';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import admin from "firebase-admin";
 
 // Import routes
 import userRoutes from './routes/users.js';
@@ -12,8 +13,45 @@ import linkRoutes from './routes/links.js';
 import authRoutes from './routes/auth.js';
 import analyticsRoutes from './routes/analytics.js';
 import achievementsRoutes from './routes/achievements.js';
+import testRoutes from './routes/test.js';
+
+// Import middleware
+import verifyFirebaseToken from "./middleware/firebaseAuth.js";
+
 
 dotenv.config();
+
+// Validate required environment variables
+const requiredEnvVars = [
+  'MONGODB_URI',
+  'JWT_SECRET',
+  'FIREBASE_PROJECT_ID',
+  'FIREBASE_CLIENT_EMAIL',
+  'FIREBASE_PRIVATE_KEY'
+];
+
+const missingEnvVars = requiredEnvVars.filter(envVar => !process.env[envVar]);
+if (missingEnvVars.length > 0) {
+  console.error('❌ Missing required environment variables:', missingEnvVars);
+  process.exit(1);
+}
+
+// Firebase Admin SDK setup
+if (!admin.apps.length) {
+  try {
+    admin.initializeApp({
+      credential: admin.credential.cert({
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+        privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+      }),
+    });
+    console.log("✅ Firebase Admin SDK initialized");
+  } catch (error) {
+    console.error('❌ Firebase Admin SDK initialization failed:', error);
+    process.exit(1);
+  }
+}
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -79,7 +117,9 @@ app.get('/', (req, res) => {
       users: '/api/users',
       links: '/api/links',
       analytics: '/api/analytics',
-      health: '/api/health'
+      health: '/api/health',
+      achievements: '/api/achievements',
+      test: '/api/test'
     }
   });
 });
@@ -99,6 +139,15 @@ app.use('/api/users', userRoutes);
 app.use('/api/links', linkRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/achievements', achievementsRoutes);
+app.use('/api/test', testRoutes);
+
+// Protected route example
+app.get("/api/protected", verifyFirebaseToken, (req, res) => {
+  res.json({
+    message: "You accessed a protected route!",
+    user: req.user,
+  });
+});
 
 // 404 handler
 app.use('*', (req, res) => {
@@ -122,3 +171,6 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
   console.log(`API documentation available at http://localhost:${PORT}`);
 });
+
+
+

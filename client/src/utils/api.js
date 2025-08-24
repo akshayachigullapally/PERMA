@@ -33,6 +33,44 @@ const api = {
     }
   },
 
+  // Firebase-specific request function
+  async firebaseRequest(endpoint, options = {}) {
+    const url = `${API_BASE_URL}${endpoint}`;
+    
+    try {
+      // Get Firebase ID token
+      const { auth } = await import('../config/firebase');
+      const user = auth.currentUser;
+      
+      if (!user) {
+        throw new Error('User not authenticated with Firebase');
+      }
+
+      const idToken = await user.getIdToken();
+      
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${idToken}`,
+          ...options.headers,
+        },
+        ...options,
+      };
+
+      const response = await fetch(url, config);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'API request failed');
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Firebase API request error:', error);
+      throw error;
+    }
+  },
+
   // Directory API functions
   directory: {
     async getProfiles(params = {}) {
@@ -71,16 +109,23 @@ const api = {
   // Auth API functions
   auth: {
     async login(credentials) {
-      return api.request('/auth/login', {
+      return api.request('/auth/signin', {
         method: 'POST',
         body: JSON.stringify(credentials),
       });
     },
 
     async register(userData) {
-      return api.request('/auth/register', {
+      return api.request('/auth/signup', {
         method: 'POST',
         body: JSON.stringify(userData),
+      });
+    },
+
+    async firebaseLogin(firebaseData) {
+      return api.firebaseRequest('/auth/firebase-login', {
+        method: 'POST',
+        body: JSON.stringify(firebaseData),
       });
     },
 

@@ -17,10 +17,10 @@ router.get('/', authenticateToken, async (req, res) => {
         error: 'User not found'
       });
     }
-    
+
     res.json({
       success: true,
-      links: user.links.sort((a, b) => a.order - b.order)
+      links: user.links || []
     });
   } catch (error) {
     console.error('Error fetching links:', error);
@@ -35,43 +35,50 @@ router.get('/', authenticateToken, async (req, res) => {
 router.post('/', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.userId;
-    const { title, url, description } = req.body;
-    
+    const { title, url, description, backgroundColor, textColor } = req.body;
+
     if (!title || !url) {
       return res.status(400).json({
         success: false,
         error: 'Title and URL are required'
       });
     }
-    
-    const user = await User.findById(userId);
-    
+
+    const newLink = {
+      title: title.trim(),
+      url: url.trim(),
+      description: description?.trim() || '',
+      backgroundColor: backgroundColor || '#3B82F6',
+      textColor: textColor || '#FFFFFF',
+      isActive: true,
+      clicks: 0,
+      order: 0
+    };
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $push: { links: newLink } },
+      { new: true }
+    );
+
     if (!user) {
       return res.status(404).json({
         success: false,
         error: 'User not found'
       });
     }
-    
-    const newLink = {
-      title,
-      url,
-      description,
-      order: user.links.length
-    };
-    
-    user.links.push(newLink);
-    await user.save();
-    
+
+    const addedLink = user.links[user.links.length - 1];
+
     res.status(201).json({
       success: true,
-      link: user.links[user.links.length - 1]
+      link: addedLink
     });
   } catch (error) {
-    console.error('Error creating link:', error);
+    console.error('Error adding link:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to create link'
+      error: 'Failed to add link'
     });
   }
 });
@@ -81,36 +88,26 @@ router.put('/:linkId', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.userId;
     const { linkId } = req.params;
-    const { title, url, description, isActive } = req.body;
-    
-    const user = await User.findById(userId);
-    
+    const updateData = req.body;
+
+    const user = await User.findOneAndUpdate(
+      { _id: userId, 'links._id': linkId },
+      { $set: { 'links.$': { ...updateData, _id: linkId } } },
+      { new: true }
+    );
+
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        error: 'User not found'
-      });
-    }
-    
-    const link = user.links.id(linkId);
-    
-    if (!link) {
       return res.status(404).json({
         success: false,
         error: 'Link not found'
       });
     }
-    
-    if (title) link.title = title;
-    if (url) link.url = url;
-    if (description !== undefined) link.description = description;
-    if (isActive !== undefined) link.isActive = isActive;
-    
-    await user.save();
-    
+
+    const updatedLink = user.links.find(link => link._id.toString() === linkId);
+
     res.json({
       success: true,
-      link
+      link: updatedLink
     });
   } catch (error) {
     console.error('Error updating link:', error);
@@ -126,28 +123,20 @@ router.delete('/:linkId', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.userId;
     const { linkId } = req.params;
-    
-    const user = await User.findById(userId);
-    
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $pull: { links: { _id: linkId } } },
+      { new: true }
+    );
+
     if (!user) {
       return res.status(404).json({
         success: false,
         error: 'User not found'
       });
     }
-    
-    const linkIndex = user.links.findIndex(link => link._id.toString() === linkId);
-    
-    if (linkIndex === -1) {
-      return res.status(404).json({
-        success: false,
-        error: 'Link not found'
-      });
-    }
-    
-    user.links.splice(linkIndex, 1);
-    await user.save();
-    
+
     res.json({
       success: true,
       message: 'Link deleted successfully'
@@ -166,14 +155,14 @@ router.put('/reorder', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.userId;
     const { linkIds } = req.body;
-    
+
     if (!Array.isArray(linkIds)) {
       return res.status(400).json({
         success: false,
         error: 'linkIds must be an array'
       });
     }
-    
+
     const user = await User.findById(userId);
     
     if (!user) {
@@ -182,20 +171,23 @@ router.put('/reorder', authenticateToken, async (req, res) => {
         error: 'User not found'
       });
     }
-    
-    // Update order for each link
-    linkIds.forEach((linkId, index) => {
-      const link = user.links.id(linkId);
+
+    // Reorder links based on provided order
+    const reorderedLinks = linkIds.map((id, index) => {
+      const link = user.links.find(l => l._id.toString() === id);
       if (link) {
         link.order = index;
+        return link;
       }
-    });
-    
+      return null;
+    }).filter(Boolean);
+
+    user.links = reorderedLinks;
     await user.save();
-    
+
     res.json({
       success: true,
-      links: user.links.sort((a, b) => a.order - b.order)
+      links: user.links
     });
   } catch (error) {
     console.error('Error reordering links:', error);
@@ -258,3 +250,4 @@ router.post('/:linkId/click', async (req, res) => {
 });
 
 export default router;
+   

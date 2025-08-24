@@ -41,7 +41,7 @@ const ProfileSettings = ({ userProfile, onClose, onUpdate }) => {
       const formData = new FormData();
       formData.append('profileImage', file);
 
-      const response = await fetch('http://localhost:5000/api/users/profile/picture', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/users/profile/picture`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${await user?.getToken()}`
@@ -108,7 +108,7 @@ const ProfileSettings = ({ userProfile, onClose, onUpdate }) => {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:5000/api/users/profile', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/users/profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

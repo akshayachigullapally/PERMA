@@ -131,7 +131,10 @@ router.post('/profile/picture', authenticateToken, (req, res) => {
     
     try {
       const userId = req.user.userId;
-      const profileImageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+      const baseUrl = process.env.NODE_ENV === 'production' 
+        ? process.env.SERVER_URL 
+        : `http://localhost:${process.env.PORT || 5000}`;
+      const profileImageUrl = `${baseUrl}/uploads/${req.file.filename}`;
       
       const user = await User.findByIdAndUpdate(
         userId,

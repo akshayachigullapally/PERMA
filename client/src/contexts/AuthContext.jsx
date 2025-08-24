@@ -24,14 +24,8 @@ const AuthProvider = ({ children }) => {
           const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/firebase-login`, {
             method: 'POST',
             headers: {
-              'Content-Type': 'application/json',
               'Authorization': `Bearer ${idToken}`
-            },
-            body: JSON.stringify({
-              displayName: firebaseUser.displayName,
-              email: firebaseUser.email,
-              photoURL: firebaseUser.photoURL
-            })
+            }
           });
 
           if (response.ok) {
@@ -179,7 +173,7 @@ const AuthProvider = ({ children }) => {
 };
 
 export { AuthContext, AuthProvider };
-   
+      
 
   
 
